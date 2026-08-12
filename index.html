@@ -2,22 +2,158 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planejamento e Administração da Manutenção</title>
+    
+    <!-- Fonte moderna do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
-        h1 { color: #333; }
-        .menu { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 30px; }
-        a { text-decoration: none; background-color: #2ea44f; color: white; padding: 15px 30px; border-radius: 6px; font-size: 18px; width: 250px; transition: background 0.3s; }
-        a:hover { background-color: #2c974b; }
+        :root {
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 30px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-button:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-color);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            fill: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .card-button:hover .card-icon {
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        /* Ajustes específicos para smartphones */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            p.subtitle {
+                font-size: 1rem;
+            }
+
+            .card-button {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Planejamento e Administração da Manutenção</h1>
-    <p>Escolha uma atividade abaixo para começar:</p>
-    
-    <div class="menu">
-               <a href="./manutençãopreditiva.html">Manutenção Preditiva</a>
-        
+
+    <div class="container">
+        <header>
+            <h1>Planejamento e Administração da Manutenção</h1>
+            <p class="subtitle">Escolha uma atividade abaixo para começar</p>
+        </header>
+
+        <nav class="menu-grid">
+            <a href="./manutençãopreditiva.html" class="card-button">
+                <!-- Ícone de Gráfico/Análise (Preditiva) -->
+                <svg class="card-icon" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                </svg>
+                <span class="card-title">Manutenção Preditiva</span>
+            </a>
+
+            <!-- Exemplo de como adicionar novos itens no futuro:
+            <a href="./manutencao-preventiva.html" class="card-button">
+                <svg class="card-icon" viewBox="0 0 24 24">
+                    <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.6C.4 7 1 10 3 12c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.4-.4.4-1.1 0-1.5z"/>
+                </svg>
+                <span class="card-title">Manutenção Preventiva</span>
+            </a>
+            -->
+        </nav>
     </div>
+
 </body>
 </html>
