@@ -66,7 +66,7 @@
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             justify-content: center;
         }
@@ -97,11 +97,8 @@
         .card-icon {
             width: 48px;
             height: 48px;
-            max-width: 48px;
-            max-height: 48px;
             margin-bottom: 16px;
             fill: var(--primary-color);
-            flex-shrink: 0;
             transition: transform 0.3s ease;
         }
 
@@ -114,7 +111,7 @@
             font-weight: 600;
         }
 
-        /* Ajustes para dispositivos móveis */
+        /* Ajustes específicos para smartphones */
         @media (max-width: 480px) {
             h1 {
                 font-size: 1.6rem;
@@ -139,29 +136,22 @@
         </header>
 
         <nav class="menu-grid">
-            <!-- Card 1: Manutenção Preditiva -->
             <a href="./manutençãopreditiva.html" class="card-button">
-                <svg class="card-icon" viewBox="0 0 24 24" width="48" height="48">
+                <!-- Ícone de Gráfico/Análise (Preditiva) -->
+                <svg class="card-icon" viewBox="0 0 24 24">
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
                 </svg>
                 <span class="card-title">Manutenção Preditiva</span>
             </a>
 
-            <!-- Card 2: Manutenção Preventiva -->
-            <a href="./preventiva.html" class="card-button">
-                <svg class="card-icon" viewBox="0 0 24 24" width="48" height="48">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+            <!-- Exemplo de como adicionar novos itens no futuro:
+            <a href="./manutencao-preventiva.html" class="card-button">
+                <svg class="card-icon" viewBox="0 0 24 24">
+                    <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.6C.4 7 1 10 3 12c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.4-.4.4-1.1 0-1.5z"/>
                 </svg>
                 <span class="card-title">Manutenção Preventiva</span>
             </a>
-
-            <!-- Card 3: Manutenção Corretiva -->
-            <a href="./corretiva.html" class="card-button">
-                <svg class="card-icon" viewBox="0 0 24 24" width="48" height="48">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
-                </svg>
-                <span class="card-title">Manutenção Corretiva</span>
-            </a>
+            -->
         </nav>
     </div>
 
