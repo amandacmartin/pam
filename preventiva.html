@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo - Manutenção Preventiva</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        p.description {
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Barra de Progresso */
+        .progress-container {
+            margin-bottom: 25px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #2563eb;
+            transition: width 0.3s ease;
+        }
+
+        /* Card do Artigo */
+        .article-card {
+            background-color: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .article-card h2 {
+            font-size: 1.2rem;
+            color: #1e40af;
+        }
+
+        .btn-article {
+            display: inline-block;
+            align-self: flex-start;
+            background-color: #2563eb;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn-article:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Questões */
+        .question-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 15px;
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: #94a3b8;
+            background: #f1f5f9;
+        }
+
+        /* Estados de Resposta */
+        .option-btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #14532d;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #7f1d1d;
+        }
+
+        .option-btn[disabled] {
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        /* Justificativa */
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .explanation.visible {
+            display: block;
+            background-color: #f1f5f9;
+            border-left: 4px solid #475569;
+            color: #334155;
+        }
+
+        /* Painel Final */
+        .result-panel {
+            display: none;
+            background: #ffffff;
+            border: 2px solid #2563eb;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+        }
+
+        .result-panel.visible {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .result-score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2563eb;
+            margin: 15px 0;
+        }
+
+        .result-message {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Campo de Nome do Aluno */
+        .student-info-box {
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .student-info-box label {
+            display: block;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .student-info-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .student-info-box input:focus {
+            border-color: #2563eb;
+        }
+
+        /* Alerta para Envio no SIGAA */
+        .sigaa-alert {
+            background-color: #fef3c7;
+            border-left: 5px solid #d97706;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .sigaa-alert strong {
+            color: #78350f;
+        }
+
+        /* Grupo de Botões */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            background-color: #16a34a;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            background-color: #15803d;
+        }
+
+        .btn-restart {
+            background-color: #64748b;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: #475569;
+        }
+
+        /* Formatação de Impressão (PDF) */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .article-card, 
+            .progress-container, 
+            #quiz, 
+            .btn-group,
+            header p.description {
+                display: none !important;
+            }
+
+            .result-panel {
+                display: block !important;
+                border: 2px solid #333;
+                box-shadow: none;
+                margin-top: 0;
+            }
+
+            .student-info-box input {
+                border: none;
+                border-bottom: 1px solid #000;
+                border-radius: 0;
+                background: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Estudo Dirigido: Manutenção Preventiva</h1>
+        <p class="description">Leia o artigo indicado antes de responder às questões abaixo para testar seu aprendizado.</p>
+    </header>
+
+    <!-- Barra de Progresso -->
+    <div class="progress-container">
+        <div class="progress-info">
+            <span>Progresso do Quiz</span>
+            <span id="progress-text">0 de 6 respondidas</span>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Bloco de Leitura -->
+    <div class="article-card">
+        <h2>📖 Material de Leitura Recomendado</h2>
+        <p>Acesse o artigo do portal FM2S para embasar suas respostas:</p>
+        <a href="https://www.fm2s.com.br/blog/manutencao-preventiva" target="_blank" class="btn-article">
+            Ler Artigo sobre Manutenção Preventiva &rarr;
+        </a>
+    </div>
+
+    <!-- Questionário -->
+    <div id="quiz">
+
+        <!-- Questão 1 -->
+        <div class="question-card" id="q1">
+            <div class="question-title">1. Qual é o objetivo principal da manutenção preventiva?</div>
+            <ul class="options-list">
+                <li><button class="option-btn" onclick="checkAnswer('q1', 0, false)">a) Reparar o equipamento após a ocorrência de uma quebra.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q1', 1, false)">b) Agir de forma reativa quando o problema se manifesta.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q1', 2, true)">c) Realizar ações antes que ocorra uma falha para reduzir riscos e aumentar a vida útil dos ativos.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q1', 3, false)">d) Substituir peças apenas quando o monitoramento de sensores indica desgaste extremo.</button></li>
+            </ul>
+            <div class="explanation">
+                <strong>Justificativa:</strong> A manutenção preventiva visa intervir antes que falhas aconteçam, aumentando a vida útil dos equipamentos e evitando paradas não planejadas.
+            </div>
+        </div>
+
+        <!-- Questão 2 -->
+        <div class="question-card" id="q2">
+            <div class="question-title">2. A manutenção baseada no tempo (TBM) é caracterizada por:</div>
+            <ul class="options-list">
+                <li><button class="option-btn" onclick="checkAnswer('q2', 0, true)">a) Intervenções feitas em intervalos pré-definidos, como dias, semanas ou meses.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q2', 1, false)">b) Intervenções baseadas apenas na quilometragem rodada.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q2', 2, false)">c) Monitoramento constante de temperatura e vibração.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q2', 3, false)">d) Ações realizadas somente após a falha funcional do equipamento.</button></li>
+            </ul>
+            <div class="explanation">
+                <strong>Justificativa:</strong> A *Time-Based Maintenance* (TBM) ocorre em intervalos de tempo estipulados regularmente (ex: mensal, semestral), independentemente do estado aparente da máquina.
+            </div>
+        </div>
+
+        <!-- Questão 3 -->
+        <div class="question-card" id="q3">
+            <div class="question-title">3. Um exemplo de manutenção baseada no uso (UBM) citado nas fontes é:</div>
+            <ul class="options-list">
+                <li><button class="option-btn" onclick="checkAnswer('q3', 0, false)">a) Revisão de um sistema de climatização a cada seis meses.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q3', 1, true)">b) Troca de óleo ou serviço em um veículo a cada 10.000 km.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q3', 2, false)">c) Pintura de uma estrutura metálica para evitar oxidação.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q3', 3, false)">d) Limpeza de filtros de ar condicionado todo início de mês.</button></li>
+            </ul>
+            <div class="explanation">
+                <strong>Justificativa:</strong> A *Usage-Based Maintenance* (UBM) utiliza dados de operação (como quilômetros rodados, horas de vôo ou ciclos de produção) para determinar o momento exato do reparo.
+            </div>
+        </div>
+
+        <!-- Questão 4 -->
+        <div class="question-card" id="q4">
+            <div class="question-title">4. O que define a manutenção baseada na condição (CBM)?</div>
+            <ul class="options-list">
+                <li><button class="option-btn" onclick="checkAnswer('q4', 0, false)">a) O seguimento rigoroso do manual do fabricante quanto a datas.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q4', 1, false)">b) A realização de reparos apenas em casos de emergência.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q4', 2, true)">c) O monitoramento de sinais de desgaste, como temperatura ou vibração, para agir no momento certo.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q4', 3, false)">d) A troca de peças de forma aleatória para garantir a segurança.</button></li>
+            </ul>
+            <div class="explanation">
+                <strong>Justificativa:</strong> A *Condition-Based Maintenance* (CBM) acompanha parâmetros reais da máquina (temperatura, ruído, vibração) para agendar a manutenção antes que uma degradação vire falha catastrófica.
+            </div>
+        </div>
+
+        <!-- Questão 5 -->
+        <div class="question-card" id="q5">
+            <div class="question-title">5. Quem pode ser responsável pela execução da manutenção preventiva em uma empresa?</div>
+            <ul class="options-list">
+                <li><button class="option-btn" onclick="checkAnswer('q5', 0, false)">a) Apenas o fabricante do equipamento.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q5', 1, false)">b) Exclusivamente uma equipe interna de engenharia.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q5', 2, true)">c) Equipes internas, prestadores de serviço especializados ou técnicos do fabricante.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q5', 3, false)">d) Qualquer operador, independentemente de treinamento técnico.</button></li>
+            </ul>
+            <div class="explanation">
+                <strong>Justificativa:</strong> A execução pode ser realizada de forma mista: equipes internas preparadas, contratos com especialistas terceirizados ou suporte técnico credenciado dos fabricantes.
+            </div>
+        </div>
+
+        <!-- Questão 6 -->
+        <div class="question-card" id="q6">
+            <div class="question-title">6. Qual a diferença fundamental entre manutenção preventiva e corretiva?</div>
+            <ul class="options-list">
+                <li><button class="option-btn" onclick="checkAnswer('q6', 0, false)">a) A preventiva é reativa e a corretiva é proativa.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q6', 1, true)">b) A preventiva é proativa (evita falhas) e a corretiva é reativa (age após o problema).</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q6', 2, false)">c) Não há diferença, ambos os termos significam o mesmo tipo de intervenção.</button></li>
+                <li><button class="option-btn" onclick="checkAnswer('q6', 3, false)">d) A corretiva utiliza sensores IoT e a preventiva utiliza apenas ferramentas manuais.</button></li>
+            </ul>
+            <div class="explanation">
+                <strong>Justificativa:</strong> A principal distinção está no momento da intervenção: a preventiva antecipa o problema (proativa), enquanto a corretiva conserta após a quebra/falha instalada (reativa).
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Painel de Resultado Final -->
+    <div id="result-panel" class="result-panel">
+        <div class="result-icon">🎉</div>
+        <h2 class="result-title">Parabéns por concluir a atividade!</h2>
+        <p class="description">Confira abaixo o seu desempenho no estudo dirigido de Manutenção Preventiva:</p>
+        
+        <div class="result-score" id="score-display">0 / 6 (0%)</div>
+        <p class="result-message" id="result-message"></p>
+
+        <!-- Identificação do Aluno -->
+        <div class="student-info-box">
+            <label for="student-name">Nome Completo do Aluno(a):</label>
+            <input type="text" id="student-name" placeholder="Digite seu nome completo aqui..." required>
+        </div>
+
+        <!-- Alerta SIGAA -->
+        <div class="sigaa-alert">
+            📌 <strong>Instruções de Envio:</strong> Preencha seu nome completo no campo acima, clique no botão <strong>"Salvar Comprovante em PDF"</strong> e envie o arquivo gerado na tarefa correspondente no <strong>SIGAA</strong> para validação da sua nota!
+        </div>
+
+        <!-- Ações -->
+        <div class="btn-group">
+            <button class="btn-action" onclick="generatePDF()">📄 Salvar Comprovante em PDF</button>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Refazer o Quiz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const totalQuestions = 6;
+    let answeredCount = 0;
+    let correctCount = 0;
+
+    function checkAnswer(questionId, selectedIndex, isCorrect) {
+        const questionCard = document.getElementById(questionId);
+        const buttons = questionCard.querySelectorAll('.option-btn');
+        const explanation = questionCard.querySelector('.explanation');
+
+        // Desabilita os botões da questão atual
+        buttons.forEach((button, index) => {
+            button.disabled = true;
+            if (index === selectedIndex) {
+                if (isCorrect) {
+                    button.classList.add('correct');
+                } else {
+                    button.classList.add('wrong');
+                }
+            }
+        });
+
+        // Se errou, destaca a opção correta
+        if (!isCorrect) {
+            buttons.forEach(button => {
+                if (button.getAttribute('onclick').includes('true')) {
+                    button.classList.add('correct');
+                }
+            });
+        } else {
+            correctCount++;
+        }
+
+        // Exibe a justificativa
+        explanation.classList.add('visible');
+
+        // Atualiza contagem de progresso
+        answeredCount++;
+        updateProgress();
+
+        // Se respondeu todas, mostra a tela final
+        if (answeredCount === totalQuestions) {
+            setTimeout(showResults, 600);
+        }
+    }
+
+    function updateProgress() {
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const percentage = Math.round((answeredCount / totalQuestions) * 100);
+
+        progressBar.style.width = percentage + '%';
+        progressText.innerText = `${answeredCount} de ${totalQuestions} respondidas`;
+    }
+
+    function showResults() {
+        const resultPanel = document.getElementById('result-panel');
+        const scoreDisplay = document.getElementById('score-display');
+        const resultMessage = document.getElementById('result-message');
+
+        const percentage = Math.round((correctCount / totalQuestions) * 100);
+        scoreDisplay.innerText = `${correctCount} de ${totalQuestions} acertos (${percentage}%)`;
+
+        if (percentage === 100) {
+            resultMessage.innerHTML = "🌟 <strong>Excelente!</strong> Você demonstrou domínio total do conteúdo sobre Manutenção Preventiva!";
+        } else if (percentage >= 70) {
+            resultMessage.innerHTML = "👏 <strong>Muito bem!</strong> Você teve um ótimo desempenho e compreendeu os conceitos fundamentais.";
+        } else if (percentage >= 50) {
+            resultMessage.innerHTML = "👍 <strong>Bom trabalho!</strong> Recomendamos revisar o artigo para fixar ainda melhor os conceitos.";
+        } else {
+            resultMessage.innerHTML = "📚 <strong>Continue praticando!</strong> Leia o artigo recomendado com atenção e tente novamente para melhorar sua nota.";
+        }
+
+        resultPanel.classList.add('visible');
+        resultPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function generatePDF() {
+        const studentName = document.getElementById('student-name').value.trim();
+        if (!studentName) {
+            alert("Por favor, digite seu nome completo antes de gerar o comprovante em PDF.");
+            document.getElementById('student-name').focus();
+            return;
+        }
+        window.print();
+    }
+
+    function restartQuiz() {
+        answeredCount = 0;
+        correctCount = 0;
+
+        // Reseta barra de progresso
+        updateProgress();
+
+        // Oculta resultado final
+        document.getElementById('result-panel').classList.remove('visible');
+
+        // Reseta botões e justificativas
+        for (let i = 1; i <= totalQuestions; i++) {
+            const questionCard = document.getElementById('q' + i);
+            const buttons = questionCard.querySelectorAll('.option-btn');
+            const explanation = questionCard.querySelector('.explanation');
+
+            buttons.forEach(button => {
+                button.disabled = false;
+                button.classList.remove('correct', 'wrong');
+            });
+
+            explanation.classList.remove('visible');
+        }
+
+        // Rola até o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
