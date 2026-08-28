@@ -65,10 +65,20 @@
         }
 
         .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            display: flex;
+            flex-wrap: wrap;
             justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Container dos Cards / Dropdowns */
+        .dropdown,
+        .menu-card-item {
+            flex: 1;
+            min-width: 260px;
+            max-width: 340px;
+            position: relative;
         }
 
         .card-button {
@@ -84,8 +94,9 @@
             box-shadow: var(--shadow);
             border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
         }
 
         .card-button:hover {
@@ -111,19 +122,51 @@
             font-weight: 600;
         }
 
-        /* Ajustes específicos para smartphones */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            p.subtitle {
-                font-size: 1rem;
-            }
+        /* Submenu de opções do Dropdown */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 105%;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            z-index: 10;
+        }
 
-            .card-button {
-                padding: 20px;
-            }
+        /* Exibe as opções ao focar/clicar no botão */
+        .dropdown:focus-within .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 14px 20px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-color);
+            color: #ffffff;
+        }
+
+        @media (max-width: 580px) {
+            h1 { font-size: 1.6rem; }
+            p.subtitle { font-size: 1rem; }
+            .card-button { padding: 20px; }
+            .dropdown, .menu-card-item { max-width: 100%; }
         }
     </style>
 </head>
@@ -136,39 +179,34 @@
         </header>
 
         <nav class="menu-grid">
-            <a href="./manutençãopreditiva.html" class="card-button">
-                <!-- Ícone de Gráfico/Análise (Preditiva) -->
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
-                </svg>
-                <span class="card-title">Manutenção Preditiva</span>
-            </a>
-            
-            <a href="./preventiva.html" class="card-button">
-                <!-- Ícone de Gráfico/Análise (Preditiva) -->
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
-                </svg>
-                <span class="card-title">Manutenção Preventiva</span>
-            </a>
-            
-            <a href="./corretiva.html" class="card-button">
-                <!-- Ícone de Gráfico/Análise (Preditiva) -->
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
-                </svg>
-                <span class="card-title">Manutenção Corretiva</span>
-            </a>
-            <!-- Exemplo de como adicionar novos itens no futuro:
-            <a href="./manutencao-preventiva.html" class="card-button">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.6C.4 7 1 10 3 12c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.4-.4.4-1.1 0-1.5z"/>
-                </svg>
-                <span class="card-title">Manutenção Preventiva</span>
-            </a>
-            -->
+            <!-- 1. Tipos de Manutenção (Menu Dropdown) -->
+            <div class="dropdown">
+                <button class="card-button" aria-haspopup="true">
+                    <svg class="card-icon" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                    </svg>
+                    <span class="card-title">Tipos de Manutenção</span>
+                </button>
+                
+                <div class="dropdown-menu">
+                    <a href="./manutençãopreditiva.html" class="dropdown-item">Manutenção Preditiva</a>
+                    <a href="./preventiva.html" class="dropdown-item">Manutenção Preventiva</a>
+                    <a href="./corretiva.html" class="dropdown-item">Manutenção Corretiva</a>
+                </div>
+            </div>
+
+            <!-- 2. Aplicações da Manutenção (Link direto) -->
+            <div class="menu-card-item">
+                <a href="./aplicacoes.html" class="card-button">
+                    <svg class="card-icon" viewBox="0 0 24 24">
+                        <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.6C.4 7 1 10 3 12c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.4-.4.4-1.1 0-1.5z"/>
+                    </svg>
+                    <span class="card-title">Aplicações da Manutenção</span>
+                </a>
+            </div>
         </nav>
     </div>
 
 </body>
 </html>
+```eof
