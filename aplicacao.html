@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudo de Caso - Manutenção Industrial</title>
+    <!-- Biblioteca para conversão de HTML para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
+            --disabled-color: #94a3b8;
+            --success-color: #16a34a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 40px;
+            }
+        }
+
+        /* Indicador de Progresso */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .step {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--disabled-color);
+        }
+
+        .step.active {
+            color: var(--primary-color);
+        }
+
+        /* Tipografia */
+        h1 {
+            font-size: 1.5rem;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .intro-text p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        /* Campo de Nome */
+        .user-info-grid {
+            margin-bottom: 24px;
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        .input-field input {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #ffffff;
+        }
+
+        .input-field input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Formulário e Questões */
+        .question-group {
+            margin-bottom: 24px;
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .question-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+
+        .sub-questions {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .sub-question-item label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 90px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.98rem;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #ffffff;
+        }
+
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Botões */
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+            gap: 12px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+            padding: 14px 28px;
+            font-size: 1.05rem;
+        }
+
+        .btn-success:hover {
+            background-color: #15803d;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Tela de Sucesso */
+        .success-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .success-box h2 {
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        .success-box p {
+            color: #15803d;
+            font-size: 1.05rem;
+        }
+
+        .pdf-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        /* Estilo para Renderização do PDF */
+        .pdf-template {
+            padding: 10px;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .pdf-header {
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-header h1 {
+            font-size: 16pt;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .pdf-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10pt;
+            color: #475569;
+            font-weight: bold;
+        }
+
+        .pdf-q-item {
+            margin-bottom: 16px;
+            page-break-inside: avoid;
+        }
+
+        .pdf-q-title {
+            font-weight: bold;
+            font-size: 10.5pt;
+            color: #1e3a8a;
+            margin-bottom: 4px;
+        }
+
+        .pdf-q-answer {
+            font-size: 10pt;
+            color: #0f172a;
+            background: #f8fafc;
+            border-left: 3px solid #2563eb;
+            padding: 8px 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="step-indicator">
+        <span id="step1-indicator" class="step active">1. Leitura do Texto</span>
+        <span id="step2-indicator" class="step">2. Questões</span>
+    </div>
+
+    <!-- PARTE 1: LEITURA DO TEXTO -->
+    <div id="part1">
+        <h1>Estudo Dirigido: Aplicações da Manutenção</h1>
+        <p class="subtitle">Leia atentamente o texto introdutório antes de prosseguir para as perguntas.</p>
+        
+        <div class="intro-text">
+            <p>A manutenção é aplicada em máquinas, equipamentos, instalações e sistemas para garantir que desempenhem suas funções de maneira segura, confiável e adequada às necessidades da organização. Ela está presente em ambientes industriais, agrícolas, comerciais, hospitalares, de transporte, de energia e em diversos outros contextos.</p>
+            <p>A necessidade de manutenção surge porque os equipamentos sofrem desgaste, envelhecimento, esforços mecânicos, variações de temperatura, vibrações, erros de operação, falhas de montagem, contaminação e problemas elétricos, entre outras situações. Quando uma falha ocorre, podem existir consequências como parada de produção, atraso na entrega, desperdício de materiais, aumento de custos, baixa qualidade, acidentes e danos ambientais.</p>
+            <p>A escolha da estratégia de manutenção depende da função e da criticidade do equipamento. Itens simples, baratos e de fácil substituição podem aceitar uma manutenção corretiva planejada. Equipamentos que exigem inspeções periódicas podem ser atendidos por manutenção preventiva. Já equipamentos críticos, cujo funcionamento pode ser acompanhado por dados como vibração, temperatura, ruído ou consumo de energia, podem receber manutenção preditiva.</p>
+            <p>Portanto, a manutenção não deve ser entendida apenas como o conserto após uma quebra. Ela é uma atividade essencial para evitar perdas, aumentar a disponibilidade dos equipamentos e apoiar a segurança e a continuidade das operações.</p>
+        </div>
+
+        <button id="btn-next" class="btn-primary" onclick="goToPart2()">Ir para as Questões →</button>
+    </div>
+
+    <!-- PARTE 2: QUESTÕES -->
+    <form id="part2" class="hidden" onsubmit="submitForm(event)">
+        <h2>Estudo Dirigido: Questões</h2>
+        <p class="subtitle">Preencha seu nome e responda a todas as questões para gerar o relatório final em PDF.</p>
+
+        <!-- Identificação do Aluno -->
+        <div class="user-info-grid">
+            <div class="input-field">
+                <label for="student-name">Nome Completo do Aluno(a):</label>
+                <input type="text" id="student-name" required placeholder="Digite seu nome completo">
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label for="q1">1. Por que máquinas e equipamentos precisam de manutenção ao longo do tempo?</label>
+            <textarea id="q1" name="q1" required placeholder="Digite sua resposta aqui..."></textarea>
+        </div>
+
+        <div class="question-group">
+            <label for="q2">2. Cite três possíveis consequências da falha de um equipamento para uma empresa ou para a sociedade.</label>
+            <textarea id="q2" name="q2" required placeholder="Digite sua resposta aqui..."></textarea>
+        </div>
+
+        <div class="question-group">
+            <label for="q3">3. Uma lâmpada de um corredor pouco utilizado queimou. Existem outras luminárias funcionando e a troca é rápida e barata. Qual estratégia de manutenção pode ser adotada? Justifique.</label>
+            <textarea id="q3" name="q3" required placeholder="Digite sua resposta aqui..."></textarea>
+        </div>
+
+        <div class="question-group">
+            <label for="q4">4. Uma bomba que abastece uma linha de produção apresenta vibração e ruído anormais. Caso ela pare, a produção será interrompida. Qual estratégia de manutenção seria mais adequada? Justifique.</label>
+            <textarea id="q4" name="q4" required placeholder="Digite sua resposta aqui..."></textarea>
+        </div>
+
+        <div class="question-group">
+            <label for="q5">5. Uma correia transportadora deve passar por inspeção, limpeza, ajuste e verificação de tensão a cada período definido pelo fabricante. Qual tipo de manutenção se aplica prioritariamente? Explique.</label>
+            <textarea id="q5" name="q5" required placeholder="Digite sua resposta aqui..."></textarea>
+        </div>
+
+        <!-- Questão 6 dividida em subitens -->
+        <div class="question-group">
+            <label>6. Escolha um equipamento de uma indústria, oficina, lavoura, empresa de transporte, escola, residência ou outro ambiente:</label>
+            
+            <div class="sub-questions">
+                <div class="sub-question-item">
+                    <label for="q6_a">a) Qual a função do equipamento?</label>
+                    <textarea id="q6_a" name="q6_a" required placeholder="Descreva o equipamento e sua função..."></textarea>
+                </div>
+
+                <div class="sub-question-item">
+                    <label for="q6_b">b) Qual uma falha possível?</label>
+                    <textarea id="q6_b" name="q6_b" required placeholder="Descreva a falha..."></textarea>
+                </div>
+
+                <div class="sub-question-item">
+                    <label for="q6_c">c) Qual uma consequência dessa falha?</label>
+                    <textarea id="q6_c" name="q6_c" required placeholder="Descreva as consequências da falha..."></textarea>
+                </div>
+
+                <div class="sub-question-item">
+                    <label for="q6_d">d) Qual uma ação de manutenção que poderia ser adotada?</label>
+                    <textarea id="q6_d" name="q6_d" required placeholder="Descreva a ação de manutenção recomendada..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="button" class="btn-secondary" onclick="goToPart1()">← Voltar ao Texto</button>
+            <button type="submit" class="btn-primary" style="width: auto;">Concluir e Finalizar</button>
+        </div>
+    </form>
+
+    <!-- TELA FINAL: GERAR PDF E AVISO SIGAA -->
+    <div id="final-screen" class="hidden">
+        <div class="success-box">
+            <h2>✔ Atividade Concluída com Sucesso!</h2>
+            <p><strong>Atenção:</strong> Salve o documento em PDF clicando no botão abaixo e faça o envio do arquivo final na plataforma <strong>SIGAA</strong>.</p>
+        </div>
+
+        <!-- Conteúdo completo formatado para exportação no PDF -->
+        <div id="pdf-content" class="pdf-template">
+            <div class="pdf-header">
+                <h1>Estudo Dirigido: Aplicações da Manutenção</h1>
+                <div class="pdf-info">
+                    <div><strong>Aluno(a):</strong> <span id="pdf-student-name"></span></div>
+                    <div><strong>Data de Realização:</strong> <span id="pdf-submission-date"></span></div>
+                </div>
+            </div>
+
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">1. Por que máquinas e equipamentos precisam de manutenção ao longo do tempo?</div>
+                <div class="pdf-q-answer" id="pdf-q1"></div>
+            </div>
+
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">2. Cite três possíveis consequências da falha de um equipamento para uma empresa ou para a sociedade.</div>
+                <div class="pdf-q-answer" id="pdf-q2"></div>
+            </div>
+
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">3. Uma lâmpada de um corredor pouco utilizado queimou. Existem outras luminárias funcionando e a troca é rápida e barata. Qual estratégia de manutenção pode ser adotada? Justifique.</div>
+                <div class="pdf-q-answer" id="pdf-q3"></div>
+            </div>
+
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">4. Uma bomba que abastece uma linha de produção apresenta vibração e ruído anormais. Caso ela pare, a produção será interrompida. Qual estratégia de manutenção seria mais adequada? Justifique.</div>
+                <div class="pdf-q-answer" id="pdf-q4"></div>
+            </div>
+
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">5. Uma correia transportadora deve passar por inspeção, limpeza, ajuste e verificação de tensão a cada período definido pelo fabricante. Qual tipo de manutenção se aplica prioritariamente? Explique.</div>
+                <div class="pdf-q-answer" id="pdf-q5"></div>
+            </div>
+
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">6. Análise de Equipamento Específico:</div>
+                <div style="margin-left: 10px;">
+                    <p style="margin-top: 6px; font-weight: bold; font-size: 10pt; color: #334155;">a) Função do equipamento:</p>
+                    <div class="pdf-q-answer" id="pdf-q6_a"></div>
+                    <p style="margin-top: 6px; font-weight: bold; font-size: 10pt; color: #334155;">b) Falha possível:</p>
+                    <div class="pdf-q-answer" id="pdf-q6_b"></div>
+                    <p style="margin-top: 6px; font-weight: bold; font-size: 10pt; color: #334155;">c) Consequência da falha:</p>
+                    <div class="pdf-q-answer" id="pdf-q6_c"></div>
+                    <p style="margin-top: 6px; font-weight: bold; font-size: 10pt; color: #334155;">d) Ação de manutenção recomendada:</p>
+                    <div class="pdf-q-answer" id="pdf-q6_d"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pdf-actions">
+            <button class="btn-success" onclick="downloadPDF()">📄 Salvar Respostas em PDF</button>
+            <button class="btn-secondary" onclick="location.reload()">Refazer / Novo Preenchimento</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para obter a data atual do dia de envio formatada (DD/MM/AAAA)
+    function getTodayFormattedDate() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Navega para a Parte 2
+    function goToPart2() {
+        document.getElementById('part1').classList.add('hidden');
+        document.getElementById('part2').classList.remove('hidden');
+        
+        document.getElementById('step1-indicator').classList.remove('active');
+        document.getElementById('step2-indicator').classList.add('active');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Volta para a Parte 1
+    function goToPart1() {
+        document.getElementById('part2').classList.add('hidden');
+        document.getElementById('part1').classList.remove('hidden');
+        
+        document.getElementById('step2-indicator').classList.remove('active');
+        document.getElementById('step1-indicator').classList.add('active');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Transfere os dados inseridos para a área de impressão do PDF
+    function submitForm(event) {
+        event.preventDefault();
+
+        const nameVal = document.getElementById('student-name').value;
+        const currentDate = getTodayFormattedDate();
+
+        document.getElementById('pdf-student-name').innerText = nameVal;
+        document.getElementById('pdf-submission-date').innerText = currentDate;
+
+        // Repassa o conteúdo de todas as perguntas para o PDF
+        const ids = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6_a', 'q6_b', 'q6_c', 'q6_d'];
+        ids.forEach(id => {
+            document.getElementById('pdf-' + id).innerText = document.getElementById(id).value;
+        });
+
+        // Transição para a tela final
+        document.getElementById('part2').classList.add('hidden');
+        document.querySelector('.step-indicator').classList.add('hidden');
+        document.getElementById('final-screen').classList.remove('hidden');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Gera e faz download do PDF contendo TODAS as questões e respostas
+    function downloadPDF() {
+        const element = document.getElementById('pdf-content');
+        const nameVal = document.getElementById('student-name').value.trim().replace(/[^a-zA-Z0-9]/g, '_') || 'aluno';
+        
+        const opt = {
+            margin:       [12, 12, 12, 12],
+            filename:     `Estudo_de_Caso_Manutencao_${nameVal}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+
+</body>
+</html>
