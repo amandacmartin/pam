@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercício Prático: Gráfico de Pareto & Ishikawa (CNC)</title>
+    <!-- Chart.js para o gráfico de Pareto -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0f172a;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #334155;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --error: #dc2626;
+            --warning: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 15px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        /* Identificação do Aluno */
+        .student-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .info-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-field label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .info-field input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        /* Estilo das Tabelas */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        input[type="number"], input[type="text"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background-color: #fff;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-correct {
+            border-color: var(--success) !important;
+            background-color: #f0fdf4 !important;
+        }
+
+        .input-incorrect {
+            border-color: var(--error) !important;
+            background-color: #fef2f2 !important;
+        }
+
+        .feedback-tag {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 4px;
+            display: block;
+        }
+        .feedback-tag.correct { color: var(--success); }
+        .feedback-tag.incorrect { color: var(--error); }
+
+        /* Estilo da Questão 1 - 6Ms */
+        .grid-6m {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .m-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .m-item label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: var(--secondary);
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Botão de Ação */
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #15803d;
+        }
+
+        .btn-secondary {
+            background-color: #64748b;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+
+        /* Painel do Resultado Geral */
+        #result-summary {
+            display: none;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .summary-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .summary-partial {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        /* Estilos de Impressão / PDF */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            header {
+                box-shadow: none;
+                background: #1e3a8a !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                break-inside: avoid;
+            }
+            input, select, textarea {
+                border: 1px solid #999 !important;
+                background: transparent !important;
+            }
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            header { padding: 16px; border-radius: 8px; }
+            header h1 { font-size: 1.3rem; }
+            .card { padding: 14px; border-radius: 8px; }
+            .btn { width: 100%; }
+            .chart-container { height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Atividade Prática: Análise de Pareto e Ishikawa (6Ms)</h1>
+        <p>Setor de Usinagem CNC — Histórico de Paradas Não Programadas</p>
+    </header>
+
+    <!-- Identificação do Aluno -->
+    <div class="card">
+        <h2>👤 Identificação do Aluno</h2>
+        <div class="student-info">
+            <div class="info-field">
+                <label for="student_name">Nome do Aluno:</label>
+                <input type="text" id="student_name" placeholder="Digite seu nome completo">
+            </div>
+            <div class="info-field">
+                <label for="student_class">Turma / Turno:</label>
+                <input type="text" id="student_class" placeholder="Ex: Téc. Mecânica - Noite">
+            </div>
+            <div class="info-field">
+                <label for="student_date">Data:</label>
+                <input type="text" id="student_date">
+            </div>
+        </div>
+    </div>
+
+    <!-- Contexto e Dados Iniciais -->
+    <div class="card">
+        <h2>📋 Cenário e Dados Coletados</h2>
+        <p style="margin-bottom: 12px;">
+            A equipe de manutenção registrou durante 1 mês o histórico de paradas não programadas em um torno CNC. 
+            A Folha de Verificação do setor registrou os seguintes dados:
+        </p>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evento / Tipo de Falha</th>
+                        <th style="width: 200px; text-align: center;">Frequência (Ocorrências no Mês)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Vazamento de fluido refrigerante / óleo hidráulico</td><td style="text-align: center; font-weight: bold;">12</td></tr>
+                    <tr><td>Desgaste / Quebra de ferramenta de corte (inserto)</td><td style="text-align: center; font-weight: bold;">68</td></tr>
+                    <tr><td>Erro de parâmetro de corte / programação CNC</td><td style="text-align: center; font-weight: bold;">18</td></tr>
+                    <tr><td>Peça fora da tolerância dimensional especificada</td><td style="text-align: center; font-weight: bold;">34</td></tr>
+                    <tr><td>Falha no sensor pneumático de fixação da placa</td><td style="text-align: center; font-weight: bold;">6</td></tr>
+                    <tr><td>Sujeira / cavaco acumulado no barramento do torno</td><td style="text-align: center; font-weight: bold;">122</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Questão 1: Ishikawa -->
+    <div class="card">
+        <h2>1️⃣ Classificação nos 6Ms (Diagrama de Ishikawa)</h2>
+        <p style="margin-bottom: 16px; font-size: 0.9rem; color: #475569;">
+            Classifique cada falha em um dos eixos dos 6Ms: <b>Mão de Obra, Método, Matéria-Prima, Máquina, Meio Ambiente ou Medida</b>.
+        </p>
+        <div class="grid-6m">
+            <div class="m-item">
+                <label for="q1_1">Sujeira / cavaco acumulado:</label>
+                <select id="q1_1">
+                    <option value="">-- Selecione --</option>
+                    <option value="Meio Ambiente">Meio Ambiente (ou Método)</option>
+                    <option value="Máquina">Máquina</option>
+                    <option value="Mão de Obra">Mão de Obra</option>
+                    <option value="Matéria-Prima">Matéria-Prima</option>
+                    <option value="Medida">Medida</option>
+                    <option value="Método">Método</option>
+                </select>
+                <span id="fb_q1_1" class="feedback-tag"></span>
+            </div>
+
+            <div class="m-item">
+                <label for="q1_2">Desgaste / quebra de ferramenta:</label>
+                <select id="q1_2">
+                    <option value="">-- Selecione --</option>
+                    <option value="Máquina">Máquina / Matéria-Prima</option>
+                    <option value="Mão de Obra">Mão de Obra</option>
+                    <option value="Meio Ambiente">Meio Ambiente</option>
+                    <option value="Medida">Medida</option>
+                    <option value="Método">Método</option>
+                </select>
+                <span id="fb_q1_2" class="feedback-tag"></span>
+            </div>
+
+            <div class="m-item">
+                <label for="q1_3">Peça fora da tolerância:</label>
+                <select id="q1_3">
+                    <option value="">-- Selecione --</option>
+                    <option value="Medida">Medida / Máquina</option>
+                    <option value="Mão de Obra">Mão de Obra</option>
+                    <option value="Meio Ambiente">Meio Ambiente</option>
+                    <option value="Matéria-Prima">Matéria-Prima</option>
+                    <option value="Método">Método</option>
+                </select>
+                <span id="fb_q1_3" class="feedback-tag"></span>
+            </div>
+
+            <div class="m-item">
+                <label for="q1_4">Erro de parâmetro / programação:</label>
+                <select id="q1_4">
+                    <option value="">-- Selecione --</option>
+                    <option value="Mão de Obra">Mão de Obra / Método</option>
+                    <option value="Máquina">Máquina</option>
+                    <option value="Meio Ambiente">Meio Ambiente</option>
+                    <option value="Matéria-Prima">Matéria-Prima</option>
+                    <option value="Medida">Medida</option>
+                </select>
+                <span id="fb_q1_4" class="feedback-tag"></span>
+            </div>
+
+            <div class="m-item">
+                <label for="q1_5">Vazamento de fluido / óleo:</label>
+                <select id="q1_5">
+                    <option value="">-- Selecione --</option>
+                    <option value="Máquina">Máquina</option>
+                    <option value="Mão de Obra">Mão de Obra</option>
+                    <option value="Meio Ambiente">Meio Ambiente</option>
+                    <option value="Matéria-Prima">Matéria-Prima</option>
+                    <option value="Medida">Medida</option>
+                    <option value="Método">Método</option>
+                </select>
+                <span id="fb_q1_5" class="feedback-tag"></span>
+            </div>
+
+            <div class="m-item">
+                <label for="q1_6">Falha no sensor pneumático:</label>
+                <select id="q1_6">
+                    <option value="">-- Selecione --</option>
+                    <option value="Máquina">Máquina</option>
+                    <option value="Mão de Obra">Mão de Obra</option>
+                    <option value="Meio Ambiente">Meio Ambiente</option>
+                    <option value="Matéria-Prima">Matéria-Prima</option>
+                    <option value="Medida">Medida</option>
+                    <option value="Método">Método</option>
+                </select>
+                <span id="fb_q1_6" class="feedback-tag"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questão 2: Tabela de Pareto -->
+    <div class="card">
+        <h2>2️⃣ Construção da Tabela de Pareto</h2>
+        <p style="margin-bottom: 12px; font-size: 0.9rem; color: #475569;">
+            <b>a)</b> Reordene as falhas em ordem decrescente.<br>
+            <b>b)</b> Calcule o % Unitário (em relação ao total de 260 ocorrências).<br>
+            <b>c)</b> Calcule o % Acumulado.
+        </p>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">Pos</th>
+                        <th>Causa / Falha</th>
+                        <th style="width: 110px;">Ocorrências</th>
+                        <th style="width: 120px;">% Unitário</th>
+                        <th style="width: 120px;">% Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody id="pareto-table-body">
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-secondary no-print" onclick="updateChartFromInputs()" style="margin-top: 10px; font-size: 0.85rem; padding: 8px 16px;">
+            📊 Gerar / Atualizar Gráfico de Pareto
+        </button>
+    </div>
+
+    <!-- Gráfico de Pareto -->
+    <div class="card">
+        <h2>📊 Gráfico de Pareto (Visualização)</h2>
+        <div class="chart-container">
+            <canvas id="paretoChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Questão 3: Análise 80/20 -->
+    <div class="card">
+        <h2>3️⃣ Análise de Pareto & Tomada de Decisão (Princípio 80/20)</h2>
+        <div style="margin-bottom: 16px;">
+            <p><b>A) Quais são os "Poucos Vitais" que correspondem a aproximadamente 80% dos problemas?</b></p>
+            <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                <label><input type="radio" name="q3_a" value="1"> Apenas "Sujeira / cavaco acumulado"</label>
+                <label><input type="radio" name="q3_a" value="2"> "Sujeira/cavaco acumulado" + "Desgaste/quebra de ferramenta"</label>
+                <label><input type="radio" name="q3_a" value="3"> "Peça fora da tolerância" + "Erro de parâmetro"</label>
+                <label><input type="radio" name="q3_a" value="4"> Todas as 6 causas de forma igual</label>
+            </div>
+            <span id="fb_q3_a" class="feedback-tag"></span>
+        </div>
+
+        <div>
+            <p><b>B) Qual deve ser a prioridade imediata da equipe para reduzir drasticamente as paradas?</b></p>
+            <textarea id="q3_b" rows="3" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem;" placeholder="Escreva aqui a sua recomendação técnica para a equipe de manutenção..."></textarea>
+            <span id="fb_q3_b" class="feedback-tag"></span>
+        </div>
+    </div>
+
+    <!-- Botões de Ação e Feedback Final -->
+    <div class="card">
+        <div class="actions no-print">
+            <button class="btn btn-secondary" onclick="resetForm()">🔄 Limpar Respostas</button>
+            <button class="btn btn-primary" onclick="correctExercise()">✅ Verificar e Corrigir Exercício</button>
+            <button class="btn btn-success" onclick="generatePDF()">🖨️ Salvar como PDF / Imprimir</button>
+        </div>
+        <div id="result-summary"></div>
+    </div>
+
+    <script>
+        const causeOptions = [
+            "Sujeira / cavaco acumulado no barramento do torno",
+            "Desgaste / Quebra de ferramenta de corte (inserto)",
+            "Peça fora da tolerância dimensional especificada",
+            "Erro de parâmetro de corte / programação CNC",
+            "Vazamento de fluido refrigerante / óleo hidráulico",
+            "Falha no sensor pneumático de fixação da placa"
+        ];
+
+        const correctOrder = [
+            { cause: "Sujeira / cavaco acumulado no barramento do torno", count: 122, unitPct: 46.9, accPct: 46.9 },
+            { cause: "Desgaste / Quebra de ferramenta de corte (inserto)", count: 68, unitPct: 26.2, accPct: 73.1 },
+            { cause: "Peça fora da tolerância dimensional especificada", count: 34, unitPct: 13.1, accPct: 86.2 },
+            { cause: "Erro de parâmetro de corte / programação CNC", count: 18, unitPct: 6.9, accPct: 93.1 },
+            { cause: "Vazamento de fluido refrigerante / óleo hidráulico", count: 12, unitPct: 4.6, accPct: 97.7 },
+            { cause: "Falha no sensor pneumático de fixação da placa", count: 6, unitPct: 2.3, accPct: 100.0 }
+        ];
+
+        let paretoChartInstance = null;
+
+        function renderTable() {
+            const tbody = document.getElementById('pareto-table-body');
+            tbody.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                let optionsHTML = '<option value="">-- Selecione a falha --</option>';
+                causeOptions.forEach(opt => {
+                    optionsHTML += `<option value="${opt}">${opt}</option>`;
+                });
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: center; font-weight: bold;">${i + 1}º</td>
+                    <td>
+                        <select id="cause_${i}">${optionsHTML}</select>
+                        <span id="fb_cause_${i}" class="feedback-tag"></span>
+                    </td>
+                    <td>
+                        <input type="number" id="count_${i}" placeholder="Ex: 122">
+                        <span id="fb_count_${i}" class="feedback-tag"></span>
+                    </td>
+                    <td>
+                        <input type="number" step="0.1" id="unit_${i}" placeholder="Ex: 46.9">%
+                        <span id="fb_unit_${i}" class="feedback-tag"></span>
+                    </td>
+                    <td>
+                        <input type="number" step="0.1" id="acc_${i}" placeholder="Ex: 46.9">%
+                        <span id="fb_acc_${i}" class="feedback-tag"></span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function updateChartFromInputs() {
+            const labels = [];
+            const counts = [];
+            const accs = [];
+
+            for (let i = 0; i < 6; i++) {
+                const causeSelect = document.getElementById(`cause_${i}`).value;
+                const countVal = parseFloat(document.getElementById(`count_${i}`).value) || 0;
+                const accVal = parseFloat(document.getElementById(`acc_${i}`).value) || 0;
+
+                labels.push(causeSelect ? causeSelect.split(' ')[0] + '...' : `Item ${i+1}`);
+                counts.push(countVal);
+                accs.push(accVal);
+            }
+
+            const ctx = document.getElementById('paretoChart').getContext('2d');
+
+            if (paretoChartInstance) {
+                paretoChartInstance.destroy();
+            }
+
+            paretoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Ocorrências (Frequência)',
+                            data: counts,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: '#2563eb',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '% Acumulado',
+                            data: accs,
+                            type: 'line',
+                            borderColor: '#dc2626',
+                            backgroundColor: '#dc2626',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: 'Ocorrências' },
+                            beginAtZero: true
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: '% Acumulado' },
+                            min: 0,
+                            max: 100,
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function correctExercise() {
+            let totalItems = 0;
+            let correctItems = 0;
+
+            const q1_answers = {
+                q1_1: ["Meio Ambiente", "Método"],
+                q1_2: ["Máquina", "Matéria-Prima"],
+                q1_3: ["Medida", "Máquina"],
+                q1_4: ["Mão de Obra", "Método"],
+                q1_5: ["Máquina"],
+                q1_6: ["Máquina"]
+            };
+
+            for (let id in q1_answers) {
+                totalItems++;
+                const select = document.getElementById(id);
+                const fb = document.getElementById(`fb_${id}`);
+                const userVal = select.value;
+
+                if (q1_answers[id].includes(userVal)) {
+                    select.className = "input-correct";
+                    fb.className = "feedback-tag correct";
+                    fb.innerText = "✓ Correto!";
+                    correctItems++;
+                } else {
+                    select.className = "input-incorrect";
+                    fb.className = "feedback-tag incorrect";
+                    fb.innerText = `✗ Incorreto. Esperado: ${q1_answers[id].join(' / ')}`;
+                }
+            }
+
+            for (let i = 0; i < 6; i++) {
+                const target = correctOrder[i];
+
+                totalItems++;
+                const causeEl = document.getElementById(`cause_${i}`);
+                const fbCause = document.getElementById(`fb_cause_${i}`);
+                if (causeEl.value === target.cause) {
+                    causeEl.className = "input-correct";
+                    fbCause.className = "feedback-tag correct";
+                    fbCause.innerText = "✓ OK";
+                    correctItems++;
+                } else {
+                    causeEl.className = "input-incorrect";
+                    fbCause.className = "feedback-tag incorrect";
+                    fbCause.innerText = "✗ Ordem incorreta";
+                }
+
+                totalItems++;
+                const countEl = document.getElementById(`count_${i}`);
+                const fbCount = document.getElementById(`fb_count_${i}`);
+                if (parseInt(countEl.value) === target.count) {
+                    countEl.className = "input-correct";
+                    fbCount.className = "feedback-tag correct";
+                    fbCount.innerText = "✓ OK";
+                    correctItems++;
+                } else {
+                    countEl.className = "input-incorrect";
+                    fbCount.className = "feedback-tag incorrect";
+                    fbCount.innerText = `✗ Esperado: ${target.count}`;
+                }
+
+                totalItems++;
+                const unitEl = document.getElementById(`unit_${i}`);
+                const fbUnit = document.getElementById(`fb_unit_${i}`);
+                const unitVal = parseFloat(unitEl.value);
+                if (!isNaN(unitVal) && Math.abs(unitVal - target.unitPct) <= 0.2) {
+                    unitEl.className = "input-correct";
+                    fbUnit.className = "feedback-tag correct";
+                    fbUnit.innerText = "✓ OK";
+                    correctItems++;
+                } else {
+                    unitEl.className = "input-incorrect";
+                    fbUnit.className = "feedback-tag incorrect";
+                    fbUnit.innerText = `✗ Esperado: ${target.unitPct}%`;
+                }
+
+                totalItems++;
+                const accEl = document.getElementById(`acc_${i}`);
+                const fbAcc = document.getElementById(`fb_acc_${i}`);
+                const accVal = parseFloat(accEl.value);
+                if (!isNaN(accVal) && Math.abs(accVal - target.accPct) <= 0.2) {
+                    accEl.className = "input-correct";
+                    fbAcc.className = "feedback-tag correct";
+                    fbAcc.innerText = "✓ OK";
+                    correctItems++;
+                } else {
+                    accEl.className = "input-incorrect";
+                    fbAcc.className = "feedback-tag incorrect";
+                    fbAcc.innerText = `✗ Esperado: ${target.accPct}%`;
+                }
+            }
+
+            totalItems++;
+            const q3aSelected = document.querySelector('input[name="q3_a"]:checked');
+            const fbQ3a = document.getElementById('fb_q3_a');
+            if (q3aSelected && q3aSelected.value === "2") {
+                fbQ3a.className = "feedback-tag correct";
+                fbQ3a.innerText = "✓ Correto! As duas primeiras causas acumulam 73,1% das ocorrências.";
+                correctItems++;
+            } else {
+                fbQ3a.className = "feedback-tag incorrect";
+                fbQ3a.innerText = "✗ Incorreto. As causas vitais são Acúmulo de Cavaco + Quebra de Ferramenta (73,1%).";
+            }
+
+            const q3bText = document.getElementById('q3_b').value.trim();
+            const fbQ3b = document.getElementById('fb_q3_b');
+            if (q3bText.length > 10) {
+                fbQ3b.className = "feedback-tag correct";
+                fbQ3b.innerText = "✓ Resposta registrada! Sugestão do Gabarito: Atacar a rotina de limpeza de cavaco e o controle de vida útil da ferramenta (resolve ~73% dos problemas).";
+            } else {
+                fbQ3b.className = "feedback-tag incorrect";
+                fbQ3b.innerText = "⚠️ Escreva uma recomendação detalhada para a equipe de manutenção.";
+            }
+
+            const percent = Math.round((correctItems / totalItems) * 100);
+            const summaryEl = document.getElementById('result-summary');
+            summaryEl.style.display = 'block';
+
+            if (percent >= 80) {
+                summaryEl.className = 'summary-success';
+                summaryEl.innerHTML = `🎉 Excelente! Você acertou <b>${correctItems} de ${totalItems}</b> itens (${percent}% de aproveitamento). Parabéns!`;
+            } else {
+                summaryEl.className = 'summary-partial';
+                summaryEl.innerHTML = `⚠️ Você acertou <b>${correctItems} de ${totalItems}</b> itens (${percent}% de aproveitamento). Revise os campos destacados em vermelho acima!`;
+            }
+
+            updateChartFromInputs();
+        }
+
+        function resetForm() {
+            if (confirm("Tem certeza que deseja limpar todas as respostas?")) {
+                document.querySelectorAll('input, select, textarea').forEach(el => {
+                    if (el.type === 'radio') el.checked = false;
+                    else if (el.id !== 'student_date') el.value = '';
+                    el.className = '';
+                });
+                document.querySelectorAll('.feedback-tag').forEach(el => el.innerText = '');
+                document.getElementById('result-summary').style.display = 'none';
+                updateChartFromInputs();
+            }
+        }
+
+        function generatePDF() {
+            const studentName = document.getElementById('student_name').value.trim();
+            if (!studentName) {
+                alert('Por favor, preencha o seu nome na seção "Identificação do Aluno" antes de salvar em PDF.');
+                document.getElementById('student_name').focus();
+                return;
+            }
+            window.print();
+        }
+
+        window.onload = function() {
+            renderTable();
+            updateChartFromInputs();
+            
+            const today = new Date();
+            document.getElementById('student_date').value = today.toLocaleDateString('pt-BR');
+        };
+    </script>
+</body>
+</html>
