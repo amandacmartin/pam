@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor da Manutenção - Atividade Interativa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-serif-title {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #screen-certificate, #screen-certificate * {
+                visibility: visible;
+            }
+            #screen-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none !important;
+                border: none !important;
+                background: white !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            @page {
+                size: landscape;
+                margin: 1cm;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+
+    <!-- Header / Navigation Bar -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-gears text-blue-400 text-2xl"></i>
+                <div>
+                    <h1 class="font-bold text-base md:text-lg leading-tight">Gestor da Manutenção</h1>
+                    <p class="text-xs text-slate-400">Plataforma Interativa de Atividades</p>
+                </div>
+            </div>
+            <div id="student-badge" class="hidden bg-slate-800 px-3 py-1.5 rounded-full text-xs font-medium border border-slate-700 items-center space-x-2">
+                <i class="fa-solid fa-user-graduate text-blue-400"></i>
+                <span id="badge-name" class="text-slate-200 truncate max-w-[120px] sm:max-w-[200px]"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6 sm:py-8 flex-grow w-full">
+
+        <!-- SCREEN 1: REGISTRATION & INSTRUCTIONS -->
+        <section id="screen-intro" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 transition-all duration-300">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mt-2">Gestor da Manutenção</h2>
+            </div>
+
+            <form id="form-registration" class="space-y-6 max-w-xl mx-auto" onsubmit="handleRegistration(event)">
+                <div>
+                    <label for="student-name" class="block text-sm font-semibold text-slate-700 mb-1">Nome Completo do Aluno <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="student-name" required placeholder="Digite seu nome completo" class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-slate-800 font-medium placeholder-slate-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Data da Atividade</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-calendar-day"></i>
+                        </span>
+                        <input type="text" id="display-date" readonly class="w-full pl-10 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-600 font-semibold cursor-not-allowed">
+                    </div>
+                </div>
+
+                <!-- Material Reading Callout Stage 1 -->
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-xl space-y-2">
+                    <div class="flex items-center text-blue-900 font-bold text-sm">
+                        <i class="fa-solid fa-book-open mr-2 text-blue-600"></i> Leitura Obrigatória para a Etapa 1
+                    </div>
+                    <p class="text-xs md:text-sm text-blue-800 leading-relaxed">
+                        Acesse o material explicativo para a primeira etapa da atividade:
+                    </p>
+                    <a href="https://genesisrs.com.br/infogenesis/quem-e-o-gestor-de-manutencao/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs md:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition shadow-sm group">
+                        <span>Acessar: Quem é o Gestor de Manutenção?</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-500/30 transition duration-200 flex items-center justify-center space-x-2 text-base">
+                        <span>Iniciar Etapa 1 (17 Questões)</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SCREEN 2: STAGE 1 QUIZ -->
+        <section id="screen-stage1" class="hidden space-y-6">
+            <!-- Progress Bar Card -->
+            <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded">ETAPA 1 DE 2</span>
+                    <h3 class="text-lg font-bold text-slate-800 mt-1">Quem é o Gestor de Manutenção?</h3>
+                </div>
+                <div class="flex items-center space-x-3 w-full md:w-auto">
+                    <div class="text-xs font-semibold text-slate-500 whitespace-nowrap">Meta: 15/17 Acertos</div>
+                    <div class="w-full md:w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                        <div id="pbar-stage1" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="form-stage1" onsubmit="submitStage1(event)" class="space-y-6">
+                <div id="questions-container-1" class="space-y-6">
+                    <!-- Stage 1 questions rendered dynamically -->
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 flex justify-end">
+                    <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                        <span>Enviar Etapa 1</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SCREEN 3: STAGE 1 RESULT FEEDBACK -->
+        <section id="screen-result1" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6 text-center">
+            <div id="res1-header-icon" class="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl"></div>
+            
+            <div>
+                <h2 id="res1-title" class="text-2xl font-extrabold text-slate-900"></h2>
+                <p id="res1-subtitle" class="text-slate-600 text-sm mt-1"></p>
+            </div>
+
+            <!-- Score Cards -->
+            <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span class="block text-xs font-medium text-slate-500 uppercase">Acertos</span>
+                    <span id="res1-score" class="text-2xl md:text-3xl font-black text-slate-800">0 / 17</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span class="block text-xs font-medium text-slate-500 uppercase">Aproveitamento</span>
+                    <span id="res1-percent" class="text-2xl md:text-3xl font-black text-slate-800">0%</span>
+                </div>
+            </div>
+
+            <!-- Detailed Feedback Grid (Right / Wrong list only, NO answers) -->
+            <div class="text-left bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
+                <h4 class="font-bold text-slate-800 text-sm mb-3 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-list-check mr-1 text-blue-600"></i> Resumo do Desempenho por Questão:
+                </h4>
+                <div id="res1-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div id="res1-actions" class="pt-4 flex flex-col sm:flex-row justify-center gap-4">
+                <!-- Action buttons inserted dynamically -->
+            </div>
+        </section>
+
+        <!-- SCREEN 4: STAGE 2 QUIZ -->
+        <section id="screen-stage2" class="hidden space-y-6">
+            <!-- Header Card for Stage 2 -->
+            <div class="bg-white rounded-xl shadow-md p-5 border border-slate-200 space-y-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div>
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-1 rounded">ETAPA 2 DE 2</span>
+                        <h3 class="text-lg font-bold text-slate-800 mt-1">Habilidades do Gestor de Manutenção</h3>
+                    </div>
+                    <div class="flex items-center space-x-3 w-full md:w-auto">
+                        <div class="text-xs font-semibold text-slate-500 whitespace-nowrap">Meta: 10/12 Acertos</div>
+                        <div class="w-full md:w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                            <div id="pbar-stage2" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Reading Callout Stage 2 -->
+                <div class="bg-indigo-50 border-l-4 border-indigo-600 p-4 rounded-r-xl space-y-1">
+                    <div class="flex items-center text-indigo-900 font-bold text-sm">
+                        <i class="fa-solid fa-book-open mr-2 text-indigo-600"></i> Leitura Obrigatória para a Etapa 2
+                    </div>
+                    <p class="text-xs text-indigo-800">
+                        Consulte o artigo completo para embasar suas respostas nesta etapa:
+                    </p>
+                    <a href="https://dynamox.net/blog/habilidades-gestor-manutencao-preditiva-deve-ter" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs font-bold text-indigo-700 hover:text-indigo-900 underline group">
+                        <span>Acessar: Habilidades que um Gestor de Manutenção Preditiva deve ter</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <form id="form-stage2" onsubmit="submitStage2(event)" class="space-y-6">
+                <div id="questions-container-2" class="space-y-6">
+                    <!-- Stage 2 questions rendered dynamically -->
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 flex justify-end">
+                    <button type="submit" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                        <span>Enviar Etapa 2 e Finalizar</span>
+                        <i class="fa-solid fa-award"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SCREEN 5: STAGE 2 RESULT FEEDBACK -->
+        <section id="screen-result2" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6 text-center">
+            <div id="res2-header-icon" class="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl"></div>
+            
+            <div>
+                <h2 id="res2-title" class="text-2xl font-extrabold text-slate-900"></h2>
+                <p id="res2-subtitle" class="text-slate-600 text-sm mt-1"></p>
+            </div>
+
+            <!-- Score Cards -->
+            <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span class="block text-xs font-medium text-slate-500 uppercase">Acertos Etapa 2</span>
+                    <span id="res2-score" class="text-2xl md:text-3xl font-black text-slate-800">0 / 12</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span class="block text-xs font-medium text-slate-500 uppercase">Aproveitamento</span>
+                    <span id="res2-percent" class="text-2xl md:text-3xl font-black text-slate-800">0%</span>
+                </div>
+            </div>
+
+            <!-- Detailed Feedback Grid -->
+            <div class="text-left bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
+                <h4 class="font-bold text-slate-800 text-sm mb-3 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-list-check mr-1 text-indigo-600"></i> Resumo do Desempenho por Questão (Etapa 2):
+                </h4>
+                <div id="res2-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div id="res2-actions" class="pt-4 flex flex-col sm:flex-row justify-center gap-4">
+                <!-- Action buttons inserted dynamically -->
+            </div>
+        </section>
+
+        <!-- SCREEN 6: FINAL COMPLETION SCREEN -->
+        <section id="screen-certificate" class="hidden space-y-6">
+            
+            <!-- Completion Card -->
+            <div id="certificate-content" class="bg-white p-8 sm:p-12 rounded-3xl shadow-xl border border-slate-200 text-center max-w-2xl mx-auto space-y-6">
+                <!-- Success Icon -->
+                <div class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-5xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <div class="space-y-3">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+                        <span id="completion-student-name" class="text-blue-600"></span>, você concluiu a atividade sobre <br class="hidden sm:inline">"<span class="text-slate-800">Gestor da Manutenção</span>" com <span id="completion-percent" class="text-emerald-600 font-black">0%</span> de aproveitamento!
+                    </h2>
+                    <p class="text-sm text-slate-500">
+                        Data de Conclusão: <span id="cert-date" class="font-bold text-slate-700">--/--/----</span>
+                    </p>
+                </div>
+
+                <!-- Info Box -->
+                <div class="no-print bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-left flex items-start space-x-3 mt-6">
+                    <i class="fa-solid fa-circle-info text-amber-600 text-xl mt-0.5 flex-shrink-0"></i>
+                    <div class="text-xs sm:text-sm text-amber-900 font-semibold leading-relaxed">
+                        Atenção: Esta tela deverá ser mostrada para a professora ou enviada por e-mail.
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <div class="no-print pt-4">
+                    <button onclick="window.print()" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition flex items-center justify-center space-x-2 mx-auto">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Imprimir / Salvar em PDF</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="no-print bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800 mt-8">
+        <p>&copy; <span id="year"></span> Gestor da Manutenção — Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // DATA STRUCTURE FOR STAGE 1 (17 Questions)
+        const stage1Data = [
+            {
+                id: 1,
+                question: "De acordo com o texto, qual é a definição conceitual do Gestor de Manutenção?",
+                options: [
+                    { key: "A", text: "O profissional focado exclusivamente em reparar equipamentos após quebras operacionais." },
+                    { key: "B", text: "O profissional responsável por planejar, organizar, direcionar, coordenar e controlar os recursos para garantir confiabilidade, disponibilidade e eficiência dos ativos." },
+                    { key: "C", text: "O supervisor técnico incumbido unicamente do controle rotineiro de ordens de serviço." },
+                    { key: "D", text: "O comprador responsável exclusivamente pela aquisição de peças e insumos de reposição." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 2,
+                question: "Como é caracterizado o papel estratégico do Gestor de Manutenção dentro da empresa?",
+                options: [
+                    { key: "A", text: "Ele atua como o elo estratégico entre a operação, a engenharia, os suprimentos e as pessoas que fazem a manutenção acontecer." },
+                    { key: "B", text: "Ele atua como um auditor isolado das tarefas cotidianas da equipe operacional." },
+                    { key: "C", text: "Ele atua como o único tomador de decisões técnicas durante paradas de emergência." },
+                    { key: "D", text: "Ele atua exclusivamente como intermediário entre a diretoria e os fornecedores externos." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 3,
+                question: "A gestão da manutenção é definida essencialmente como a combinação de quais dois pilares?",
+                options: [
+                    { key: "A", text: "Redução de pessoal e corte de custos operacionais." },
+                    { key: "B", text: "Gestão da rotina e melhoria contínua." },
+                    { key: "C", text: "Atendimento emergencial e compra de novos equipamentos." },
+                    { key: "D", text: "Terceirização de serviços e automação total dos processos." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 4,
+                question: "Qual é a importância da confiabilidade humana nos resultados da manutenção?",
+                options: [
+                    { key: "A", text: "É um fator secundário, pois o desempenho depende exclusivamente da tecnologia dos equipamentos." },
+                    { key: "B", text: "É um fator decisivo para a segurança, qualidade e produtividade, pois os resultados são consequência direta das competências da equipe." },
+                    { key: "C", text: "É dispensável quando a empresa adota sistemas informatizados de gestão (CMMS)." },
+                    { key: "D", text: "É relevante apenas no momento do recrutamento inicial de engenheiros." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 5,
+                question: "Como o texto conceitua a verdadeira liderança na gestão de manutenção?",
+                options: [
+                    { key: "A", text: "Impor metas rígidas e aplicar sanções por falhas operacionais." },
+                    { key: "B", text: "Resolver os problemas técnicos sem necessidade de consultar a equipe." },
+                    { key: "C", text: "Mobilizar pessoas em torno de um propósito claro, criando, compartilhando e sustentando a visão da manutenção." },
+                    { key: "D", text: "Focar apenas em indicadores financeiros sem interferir na gestão de pessoas." }
+                ],
+                correct: "C"
+            },
+            {
+                id: 6,
+                question: "Qual é o conceito prático de \"Gestão\" apresentado no artigo?",
+                options: [
+                    { key: "A", text: "Gestão é o planejamento teórico e abstrato de metas futuras." },
+                    { key: "B", text: "Gestão é ação — é transformar planos em resultados concretos, ajudando a organização a executar o que precisa com qualidade, segurança e eficiência." },
+                    { key: "C", text: "Gestão é o acompanhamento passivo de planilhas de custos." },
+                    { key: "D", text: "Gestão é a elaboração de relatórios sem intervenção na rotina." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 7,
+                question: "Quais são os quatro fundamentos da gestão que o Gestor de Manutenção precisa dominar?",
+                options: [
+                    { key: "A", text: "Comprar, Estocar, Instalar e Descartar." },
+                    { key: "B", text: "Planejar, Organizar, Direcionar e Controlar." },
+                    { key: "C", text: "Inspecionar, Corrigir, Substituir e Relatar." },
+                    { key: "D", text: "Diagnosticar, Terceirizar, Executar e Fiscalizar." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 8,
+                question: "Ao dominar os fundamentos da gestão, que mudança ocorre na posição da manutenção na organização?",
+                options: [
+                    { key: "A", text: "Ela torna-se um departamento estritamente burocrático." },
+                    { key: "B", text: "Ela deixa de ser apenas um centro de custos e passa a ser uma área estratégica, geradora de valor." },
+                    { key: "C", text: "Ela passa a ser subordinada integralmente ao setor de suprimentos." },
+                    { key: "D", text: "Ela perde a autonomia de planejamento financeiro." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 9,
+                question: "O que significa \"alta performance\" na definição da estratégia de manutenção?",
+                options: [
+                    { key: "A", text: "Abolir a manutenção corretiva e tornar a gestão 100% preventiva." },
+                    { key: "B", text: "Definir o mix ótimo de estratégias de manutenção para cada ativo, conforme sua criticidade, modo de falha, impacto no negócio e custo do ciclo de vida." },
+                    { key: "C", text: "Substituir todas as inspeções manuais por sensores preditivos de última geração." },
+                    { key: "D", text: "Trocar peças preventivamente antes do término do período de garantia." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 10,
+                question: "Qual é a função dos \"Indicadores de Resultado\"?",
+                options: [
+                    { key: "A", text: "Medir a eficiência interna do PCM e a aderência à programação." },
+                    { key: "B", text: "Medir o impacto da manutenção no negócio, incluindo disponibilidade, confiabilidade, custos, segurança, qualidade e produtividade." },
+                    { key: "C", text: "Avaliar a quantidade de horas de treinamento realizadas pela equipe." },
+                    { key: "D", text: "Controlar a pontualidade da equipe técnica no turno." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 11,
+                question: "O que avaliam os \"Indicadores de Processo\"?",
+                options: [
+                    { key: "A", text: "O lucro líquido final da empresa no encerramento do exercício." },
+                    { key: "B", text: "A qualidade da gestão, medindo aderência ao planejamento, backlog, eficiência do PCM, qualidade da execução e reincidência de falhas." },
+                    { key: "C", text: "Os preços dos insumos negociados com fornecedores externos." },
+                    { key: "D", text: "O volume total de vendas do produto final da fábrica." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 12,
+                question: "Entre as principais responsabilidades do Gestor de Manutenção descritas no texto, destaca-se:",
+                options: [
+                    { key: "A", text: "A execução pessoal de reparos mecânicos e elétricos em campo." },
+                    { key: "B", text: "O planejamento estratégico alinhado às diretrizes da empresa e o desenvolvimento/capacitação da equipe." },
+                    { key: "C", text: "A negociação de contratos de vendas com clientes finais." },
+                    { key: "D", text: "O controle direto do estoque de matérias-primas da produção." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 13,
+                question: "Quais são os reflexos diretos das entregas do Gestor de Manutenção no desempenho da empresa?",
+                options: [
+                    { key: "A", text: "Aumento da eficiência global dos equipamentos, otimização do orçamento, redução de paradas não programadas e maior confiabilidade dos ativos." },
+                    { key: "B", text: "Aumento do estoque de peças sobressalentes e expansão desordenada do quadro de funcionários." },
+                    { key: "C", text: "Redução de investimentos em tecnologias preditivas e eliminação de treinamentos." },
+                    { key: "D", text: "Suspensão de auditorias internas de manutenção." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 14,
+                question: "Quais das opções a seguir representam competências técnicas (hard skills) essenciais ao gestor?",
+                options: [
+                    { key: "A", text: "Empatia, mediação de conflitos e oratória." },
+                    { key: "B", text: "Engenharia de manutenção, PCM, gestão de indicadores, sistemas CMMS e análise de confiabilidade/falhas." },
+                    { key: "C", text: "Redação publicitária, design gráfico e marketing digital." },
+                    { key: "D", text: "Contabilidade geral, legislação trabalhista e negociação de vendas." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 15,
+                question: "Quais competências comportamentais (soft skills) sustentam a liderança do gestor?",
+                options: [
+                    { key: "A", text: "Operação de máquinas CNC e técnicas de soldagem." },
+                    { key: "B", text: "Comunicação clara, tomada de decisão, visão estratégica, desenvolvimento de pessoas e trabalho colaborativo." },
+                    { key: "C", text: "Calibração de instrumentos de medição de precisão." },
+                    { key: "D", text: "Programação de algoritmos e gestão fiscal." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 16,
+                question: "Por que o Gestor de Manutenção é considerado um \"agente de transformação\"?",
+                options: [
+                    { key: "A", text: "Porque ele altera os manuais técnicos dos equipamentos conforme sua intuição." },
+                    { key: "B", text: "Porque ele substitui periodicamente todos os integrantes do setor." },
+                    { key: "C", text: "Porque ele conecta pessoas a um propósito, processos a resultados e estratégia à execução, criando ambientes de aprendizado e melhoria contínua." },
+                    { key: "D", text: "Porque ele reestrutura o organograma da empresa sem planejamento prévio." }
+                ],
+                correct: "C"
+            },
+            {
+                id: 17,
+                question: "Qual é o indicador prático que demonstra que o gestor construiu um sistema de manutenção forte e de qualidade?",
+                options: [
+                    { key: "A", text: "Ser o único profissional capaz de resolver paradas críticas durante a madrugada." },
+                    { key: "B", text: "A manutenção continuar funcionando bem quando ele sai de férias." },
+                    { key: "C", text: "Receber prêmios por atender pessoalmente ao maior número de chamados." },
+                    { key: "D", text: "Utilizar todo o orçamento de manutenção nos primeiros meses do ano." }
+                ],
+                correct: "B"
+            }
+        ];
+
+        // DATA STRUCTURE FOR STAGE 2 (12 Questions)
+        const stage2Data = [
+            {
+                id: 1,
+                question: "Além dos conhecimentos técnicos sobre equipamentos e processos, o que o artigo aponta como essencial para o gestor entregar resultados através da sua equipe?",
+                options: [
+                    { key: "A", text: "Habilidades interpessoais e capacidade de liderança." },
+                    { key: "B", text: "Especialização exclusiva em manutenção corretiva emergencial." },
+                    { key: "C", text: "Terceirização completa de todas as atividades operacionais." },
+                    { key: "D", text: "Substituição frequente da equipe técnica." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 2,
+                question: "O texto cita a pesquisa da autora Carol Dweck (do livro Mindset) para sustentar qual visão sobre o desenvolvimento do gestor?",
+                options: [
+                    { key: "A", text: "As habilidades de gestão são puramente inatas e não podem ser desenvolvidas." },
+                    { key: "B", text: "Uma pessoa pode aprender e aperfeiçoar aquilo que se propuser a aprender." },
+                    { key: "C", text: "O aprendizado técnico deve ser interrompido após assumir um cargo de liderança." },
+                    { key: "D", text: "Apenas engenheiros sêniores conseguem aprender novas metodologias." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 3,
+                question: "Como o artigo define a primeira habilidade: \"Excelentes Habilidades Interpessoais\"?",
+                options: [
+                    { key: "A", text: "A capacidade de se relacionar bem com as pessoas e gerar resultados positivos através delas por meio de comunicação clara e objetiva." },
+                    { key: "B", text: "O hábito de evitar negociações com fornecedores e terceiros." },
+                    { key: "C", text: "A habilidade de impor ordens sem necessidade de ouvir a equipe." },
+                    { key: "D", text: "A centralização de todas as decisões no setor financeiro." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 4,
+                question: "De acordo com o artigo, qual é a melhor forma de demonstrar a habilidade de liderança?",
+                options: [
+                    { key: "A", text: "Liderar pelo exemplo, demonstrando automotivação, organização, confiabilidade, empatia e otimismo." },
+                    { key: "B", text: "Aumentar a carga de trabalho da equipe sem definir metas claras." },
+                    { key: "C", text: "Delegar toda a responsabilidade de planejamento para os técnicos." },
+                    { key: "D", text: "Focar apenas em punições quando ocorrem falhas operacionais." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 5,
+                question: "Qual deve ser a postura de um líder capaz em relação aos integrantes do seu time?",
+                options: [
+                    { key: "A", text: "Conhecer as competências, aspirações e necessidades de melhoria de cada indivíduo para desenvolver as pessoas e extrair o melhor delas." },
+                    { key: "B", text: "Impedir que colaboradores busquem novas capacitações fora da empresa." },
+                    { key: "C", text: "Manter os liderados restritos a tarefas repetitivas sem novos desafios." },
+                    { key: "D", text: "Evitar feedbacks para não gerar conflitos internos." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 6,
+                question: "O que o texto afirma sobre o líder em relação a ter profissionais talentosos na equipe?",
+                options: [
+                    { key: "A", text: "O líder tem receio de ser superado por seus subordinados." },
+                    { key: "B", text: "Um verdadeiro líder não tem medo de ter pessoas melhores do que ele próprio no time." },
+                    { key: "C", text: "O líder deve evitar que seus colaboradores assumam novas responsabilidades." },
+                    { key: "D", text: "O gestor deve ser sempre o maior especialista técnico em todas as áreas." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 7,
+                question: "A \"Capacidade de Resolução de Problemas\" (3ª habilidade) vem acompanhada de qual competência essencial?",
+                options: [
+                    { key: "A", text: "Do pensamento crítico, definido pela capacidade de julgar situações de forma clara e racional." },
+                    { key: "B", text: "Da tomada de decisões baseada puramente em intuição." },
+                    { key: "C", text: "Do adiamento sistemático de falhas operacionais." },
+                    { key: "D", text: "Da execução imediata da primeira ideia proposta sem análise." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 8,
+                question: "Como o artigo conceitua a \"Habilidade de Gestão do Tempo\"?",
+                options: [
+                    { key: "A", text: "É o processo de organizar e planejar o tempo gasto em cada atividade para produzir o maior valor, trabalhando de forma eficiente e não apenas trabalhando mais." },
+                    { key: "B", text: "É a prática de trabalhar horas extras diariamente sem planejamento prévio." },
+                    { key: "C", text: "É a eliminação completa de pausas operacionais no chão de fábrica." },
+                    { key: "D", text: "É o hábito de responder a chamados sem definir prioridades." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 9,
+                question: "Qual é a recomendação do texto para que o gestor consiga gerenciar bem o dia de trabalho diante de interrupções e demandas conflitantes?",
+                options: [
+                    { key: "A", text: "Reservar alguns minutos no início do dia para planejar as atividades e definir a ordem de prioridade com base nos resultados." },
+                    { key: "B", text: "Atender apenas a chamados telefônicos e ignorar o planejamento diário." },
+                    { key: "C", text: "Delegar todo o planejamento diário para a diretoria." },
+                    { key: "D", text: "Executar as tarefas por ordem de chegada, sem avaliar o impacto no negócio." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 10,
+                question: "Quais transformações no ambiente industrial são citadas como impulsionadoras da necessidade de adaptação rápida?",
+                options: [
+                    { key: "A", text: "Aumento da complexidade dos equipamentos, foco em saúde e segurança, eficiência energética e uso de aplicativos móveis." },
+                    { key: "B", text: "Redução da automação e retorno aos processos manuais." },
+                    { key: "C", text: "Diminuição das exigências de segurança no trabalho." },
+                    { key: "D", text: "Abandono de metas de sustentabilidade e consumo de energia." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 11,
+                question: "O que se exige do gestor moderno na 5ª habilidade (\"Saber se adaptar a novas situações ou circunstâncias\")?",
+                options: [
+                    { key: "A", text: "Estar disposto a abraçar novas ideias, novas maneiras de trabalhar e novas tecnologias, prosperando num ambiente de mudanças." },
+                    { key: "B", text: "Manter os mesmos processos operacionais inalterados por décadas." },
+                    { key: "C", text: "Rejeitar inovações tecnológicas para evitar custos operacionais." },
+                    { key: "D", text: "Evitar alterações na rotina da equipe técnica." }
+                ],
+                correct: "A"
+            },
+            {
+                id: 12,
+                question: "Qual é o resultado a longo prazo para a equipe quando o gestor domina e aperfeiçoa essas 6 habilidades?",
+                options: [
+                    { key: "A", text: "Cria-se um ambiente saudável onde os colaboradores se sentem motivados a dar o melhor, assumir responsabilidades e novos desafios." },
+                    { key: "B", text: "A equipe passa a depender exclusivamente do gestor para decisões simples." },
+                    { key: "C", text: "Ocorrem saídas frequentes de profissionais qualificados do setor." },
+                    { key: "D", text: "A manutenção perde visibilidade perante a direção da empresa." }
+                ],
+                correct: "A"
+            }
+        ];
+
+        // GLOBAL APPLICATION STATE
+        let studentData = {
+            name: "",
+            date: "",
+            scoreStage1: 0,
+            answersStage1: {},
+            scoreStage2: 0,
+            answersStage2: {}
+        };
+
+        // INITIALIZATION ON WINDOW LOAD
+        window.onload = function() {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('pt-BR');
+            document.getElementById('display-date').value = formattedDate;
+            studentData.date = formattedDate;
+            document.getElementById('year').textContent = today.getFullYear();
+
+            renderStageQuestions('questions-container-1', stage1Data, 'q1');
+            renderStageQuestions('questions-container-2', stage2Data, 'q2');
+        };
+
+        // RENDER QUESTIONS TO DOM
+        function renderStageQuestions(containerId, questions, prefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 transition hover:border-slate-300";
+                
+                let optionsHTML = '';
+                q.options.forEach(opt => {
+                    optionsHTML += `
+                        <label class="flex items-start p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition space-x-3 group">
+                            <input type="radio" name="${prefix}_${q.id}" value="${opt.key}" required class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                            <span class="text-xs md:text-sm text-slate-700 group-hover:text-slate-900 leading-snug">
+                                <strong class="font-bold text-slate-900">${opt.key})</strong> ${opt.text}
+                            </span>
+                        </label>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-start space-x-3 mb-4">
+                        <span class="bg-slate-800 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">${q.id}</span>
+                        <h4 class="text-sm md:text-base font-bold text-slate-900 leading-snug">${q.question}</h4>
+                    </div>
+                    <div class="space-y-2.5 pl-0 md:pl-10">
+                        ${optionsHTML}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // HIDE ALL SCREENS
+        function hideAllScreens() {
+            const screens = ['screen-intro', 'screen-stage1', 'screen-result1', 'screen-stage2', 'screen-result2', 'screen-certificate'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        // HANDLE REGISTRATION SUBMIT
+        function handleRegistration(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('student-name').value.trim();
+            if (!nameInput) return;
+
+            studentData.name = nameInput;
+            document.getElementById('badge-name').textContent = nameInput;
+            document.getElementById('student-badge').classList.remove('hidden');
+            document.getElementById('student-badge').classList.add('flex');
+
+            hideAllScreens();
+            document.getElementById('screen-stage1').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // SUBMIT STAGE 1
+        function submitStage1(e) {
+            e.preventDefault();
+            let score = 0;
+            const answers = {};
+
+            stage1Data.forEach(q => {
+                const selected = document.querySelector(`input[name="q1_${q.id}"]:checked`);
+                if (selected) {
+                    answers[q.id] = selected.value;
+                    if (selected.value === q.correct) {
+                        score++;
+                    }
+                }
+            });
+
+            studentData.scoreStage1 = score;
+            studentData.answersStage1 = answers;
+
+            showStage1Results();
+        }
+
+        // DISPLAY STAGE 1 FEEDBACK
+        function showStage1Results() {
+            hideAllScreens();
+            const resScreen = document.getElementById('screen-result1');
+            resScreen.classList.remove('hidden');
+
+            const total = stage1Data.length;
+            const score = studentData.scoreStage1;
+            const percent = Math.round((score / total) * 100);
+            const passed = score >= 15;
+
+            document.getElementById('res1-score').textContent = `${score} / ${total}`;
+            document.getElementById('res1-percent').textContent = `${percent}%`;
+
+            const iconContainer = document.getElementById('res1-header-icon');
+            const title = document.getElementById('res1-title');
+            const subtitle = document.getElementById('res1-subtitle');
+            const actions = document.getElementById('res1-actions');
+
+            if (passed) {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl bg-emerald-100 text-emerald-600";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                title.textContent = "Parabéns! Você foi Aprovado na Etapa 1";
+                title.className = "text-2xl font-extrabold text-emerald-700";
+                subtitle.textContent = "Você atingiu a pontuação mínima necessária (15 acertos) e pode prosseguir.";
+
+                actions.innerHTML = `
+                    <button onclick="startStage2()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                        <span>Avançar para a Etapa 2</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                `;
+            } else {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl bg-rose-100 text-rose-600";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+                title.textContent = "Atenção: Meta Não Atingida";
+                title.className = "text-2xl font-extrabold text-rose-700";
+                subtitle.textContent = "É necessário acertar pelo menos 15 das 17 questões para desbloquear a Etapa 2. Revise o material didático e tente novamente.";
+
+                actions.innerHTML = `
+                    <button onclick="retryStage1()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl shadow transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Refazer Etapa 1</span>
+                    </button>
+                `;
+            }
+
+            // Populate Grid Result
+            const grid = document.getElementById('res1-grid');
+            grid.innerHTML = '';
+            stage1Data.forEach(q => {
+                const isCorrect = studentData.answersStage1[q.id] === q.correct;
+                const badge = document.createElement('div');
+                badge.className = `p-2.5 rounded-lg border flex items-center justify-between ${isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'}`;
+                badge.innerHTML = `
+                    <span class="font-bold">Questão ${q.id}</span>
+                    <span class="text-xs px-2 py-0.5 rounded font-bold uppercase ${isCorrect ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-200 text-rose-900'}">
+                        ${isCorrect ? '<i class="fa-solid fa-check mr-1"></i>Acertou' : '<i class="fa-solid fa-xmark mr-1"></i>Errou'}
+                    </span>
+                `;
+                grid.appendChild(badge);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function retryStage1() {
+            document.getElementById('form-stage1').reset();
+            hideAllScreens();
+            document.getElementById('screen-stage1').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startStage2() {
+            hideAllScreens();
+            document.getElementById('screen-stage2').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // SUBMIT STAGE 2
+        function submitStage2(e) {
+            e.preventDefault();
+            let score = 0;
+            const answers = {};
+
+            stage2Data.forEach(q => {
+                const selected = document.querySelector(`input[name="q2_${q.id}"]:checked`);
+                if (selected) {
+                    answers[q.id] = selected.value;
+                    if (selected.value === q.correct) {
+                        score++;
+                    }
+                }
+            });
+
+            studentData.scoreStage2 = score;
+            studentData.answersStage2 = answers;
+
+            showStage2Results();
+        }
+
+        // DISPLAY STAGE 2 FEEDBACK
+        function showStage2Results() {
+            hideAllScreens();
+            const resScreen = document.getElementById('screen-result2');
+            resScreen.classList.remove('hidden');
+
+            const total = stage2Data.length;
+            const score = studentData.scoreStage2;
+            const percent = Math.round((score / total) * 100);
+            const passed = score >= 10;
+
+            document.getElementById('res2-score').textContent = `${score} / ${total}`;
+            document.getElementById('res2-percent').textContent = `${percent}%`;
+
+            const iconContainer = document.getElementById('res2-header-icon');
+            const title = document.getElementById('res2-title');
+            const subtitle = document.getElementById('res2-subtitle');
+            const actions = document.getElementById('res2-actions');
+
+            if (passed) {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl bg-emerald-100 text-emerald-600";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                title.textContent = "Parabéns! Atividade Concluída com Sucesso!";
+                title.className = "text-2xl font-extrabold text-emerald-700";
+                subtitle.textContent = "Você atingiu a pontuação mínima (10 acertos) e concluiu toda a atividade.";
+
+                actions.innerHTML = `
+                    <button onclick="generateCertificate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-flag-checkered"></i>
+                        <span>Ver Resultado Final</span>
+                    </button>
+                `;
+            } else {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl bg-rose-100 text-rose-600";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+                title.textContent = "Atenção: Meta Não Atingida na Etapa 2";
+                title.className = "text-2xl font-extrabold text-rose-700";
+                subtitle.textContent = "É necessário acertar pelo menos 10 das 12 questões para concluir a atividade. Revise o material e tente novamente.";
+
+                actions.innerHTML = `
+                    <button onclick="retryStage2()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl shadow transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Refazer Etapa 2</span>
+                    </button>
+                `;
+            }
+
+            // Populate Grid Result
+            const grid = document.getElementById('res2-grid');
+            grid.innerHTML = '';
+            stage2Data.forEach(q => {
+                const isCorrect = studentData.answersStage2[q.id] === q.correct;
+                const badge = document.createElement('div');
+                badge.className = `p-2.5 rounded-lg border flex items-center justify-between ${isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'}`;
+                badge.innerHTML = `
+                    <span class="font-bold">Questão ${q.id}</span>
+                    <span class="text-xs px-2 py-0.5 rounded font-bold uppercase ${isCorrect ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-200 text-rose-900'}">
+                        ${isCorrect ? '<i class="fa-solid fa-check mr-1"></i>Acertou' : '<i class="fa-solid fa-xmark mr-1"></i>Errou'}
+                    </span>
+                `;
+                grid.appendChild(badge);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function retryStage2() {
+            document.getElementById('form-stage2').reset();
+            hideAllScreens();
+            document.getElementById('screen-stage2').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // GENERATE FINAL SCREEN
+        function generateCertificate() {
+            const totalQuestions = stage1Data.length + stage2Data.length;
+            const totalScore = studentData.scoreStage1 + studentData.scoreStage2;
+            const overallPercentage = Math.round((totalScore / totalQuestions) * 100);
+
+            document.getElementById('completion-student-name').textContent = studentData.name;
+            document.getElementById('completion-percent').textContent = `${overallPercentage}%`;
+            document.getElementById('cert-date').textContent = studentData.date;
+
+            hideAllScreens();
+            document.getElementById('screen-certificate').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
