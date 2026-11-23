@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Manutenção Segura</title>
+<style>
+:root{--navy:#17324d;--blue:#246b9b;--light:#eef5fa;--green:#247a55;--red:#b33a3a;--gold:#f0b44d}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#edf2f6;color:#203040;line-height:1.5}
+.wrap{max-width:900px;margin:28px auto;padding:0 16px}
+.hero{background:linear-gradient(130deg,#17324d,#246b9b);color:white;padding:28px;border-radius:18px}
+.hero h1{margin:0 0 8px;font-size:clamp(25px,4vw,36px)}
+.hero p{margin:4px 0}
+.panel{background:white;border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 4px 16px #18324d12}
+h2{color:var(--navy);margin:0 0 12px;font-size:21px}
+label{font-weight:700;display:block;margin:12px 0 5px}
+input[type=text],textarea{width:100%;padding:11px;border:1px solid #bdcbd7;border-radius:9px;font:inherit}
+textarea{min-height:105px;resize:vertical}
+.reading{background:var(--light);border-left:4px solid var(--blue);padding:14px;border-radius:8px}
+a{color:#145f91;font-weight:700}
+.progress{height:10px;background:#dce5ec;border-radius:20px;overflow:hidden;margin:14px 0}
+.progress span{display:block;height:100%;width:0;background:var(--gold);transition:width .25s}
+.q{border-top:1px solid #e4ebf0;padding:18px 0}
+.q:first-of-type{border-top:0}
+.q h3{font-size:17px;margin:0 0 12px;color:#17324d}
+.option{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;margin:7px 0;border:1px solid #dce5ec;border-radius:9px;cursor:pointer}
+.option:hover{background:#f5f9fc}
+.option input{margin-top:5px;accent-color:#246b9b}
+.feedback{display:none;margin-top:8px;padding:9px 12px;border-radius:8px;font-size:14px}
+.feedback.good{display:block;background:#e8f5ed;color:#1b6845}
+.feedback.bad{display:block;background:#fff0ef;color:#963535}
+button{border:0;border-radius:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e7eef4;color:#17324d}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+#result{display:none}
+.score{font-size:28px;font-weight:800;color:var(--green)}
+.small{font-size:13px;color:#627487}
+footer{text-align:center;color:#6b7b89;font-size:12px;padding:18px}
+@media print{
+ body{background:white;color:#111}.wrap{max-width:none;margin:0;padding:0}
+ .hero{background:white;color:#111;border:1px solid #bbb;padding:14px}
+ .panel{box-shadow:none;border:1px solid #ccc;margin:10px 0;padding:14px;break-inside:avoid}
+ .no-print,button,.progress,footer{display:none!important}
+ .feedback{display:block!important}
+ textarea,input[type=text]{border:0;border-bottom:1px solid #999;border-radius:0;padding:5px}
+ .option{border:0;padding:3px 5px;margin:2px 0}
+ a{color:#111;text-decoration:none}
+ #result{display:block!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <p><strong>DESAFIO DE SEGURANÇA • TÉCNICO EM MECÂNICA</strong></p>
+  <h1>Missão: Manutenção Segura</h1>
+  <p>Você foi convocado para identificar riscos e tomar decisões seguras antes de liberar uma máquina para manutenção.</p>
+  <p><strong>Objetivo:</strong> reconhecer riscos e aplicar procedimentos de segurança em intervenções de manutenção industrial.</p>
+</header>
+
+<section class="panel">
+  <h2>Identificação do estudante</h2>
+  <label for="student">Nome completo</label>
+  <input id="student" type="text" placeholder="Digite seu nome">
+  <label for="classroom">Turma</label>
+  <input id="classroom" type="text" placeholder="Digite sua turma">
+</section>
+
+<section class="panel">
+  <h2>Etapa 1 — Briefing da missão: leitura</h2>
+  <div class="reading">
+    <p>Antes de iniciar uma manutenção, é necessário reconhecer e controlar os riscos associados à máquina. O simples desligamento no botão de comando não garante que todas as fontes de energia estejam isoladas: podem existir energia elétrica, pneumática, hidráulica, mecânica ou energia armazenada, capazes de provocar movimentos inesperados.</p>
+    <p>O bloqueio e a etiquetagem (LOTO) ajudam a impedir a reenergização ou o acionamento acidental durante a intervenção. As fontes de energia devem ser identificadas, isoladas e bloqueadas conforme o procedimento aplicável. Também é necessário controlar energias residuais e verificar a condição de energia zero antes de começar o serviço.</p>
+    <p>Durante a intervenção, devem ser respeitados os procedimentos de segurança, as proteções e as medidas de controle dos riscos. Ao concluir, é preciso conferir o equipamento, retirar ferramentas e materiais, garantir que as pessoas estejam afastadas e realizar a liberação de acordo com o procedimento estabelecido.</p>
+  </div>
+  <p><strong>Leitura de referência:</strong> NR-12 — item 12.11, Manutenção, inspeção, preparação, ajuste, reparo e limpeza.</p>
+  <p><a href="https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-paritaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/nr-12-atualizada-2025.pdf" target="_blank" rel="noopener">Consultar a NR-12 (PDF oficial)</a></p>
+  <p class="small">Leia o material de apoio antes de responder às questões.</p>
+</section>
+
+<section class="panel" id="quiz">
+  <h2>Etapa 2 — Teste de segurança</h2>
+  <p>Marque uma alternativa em cada questão. Você receberá o resultado ao finalizar.</p>
+  <div class="progress no-print"><span id="bar"></span></div>
+  <div id="questions"></div>
+  <div class="actions no-print">
+    <button class="primary" id="finish" onclick="finishQuiz()">Finalizar missão</button>
+    <button class="secondary" onclick="resetQuiz()">Recomeçar</button>
+  </div>
+  <div id="result" class="reading" aria-live="polite"></div>
+</section>
+
+<section class="panel">
+  <h2>Etapa 3 — Desafio prático</h2>
+  <p><strong>Situação-problema:</strong> Um mecânico foi designado para realizar a manutenção de uma esteira transportadora que apresentou falha. Para executar o serviço, será necessário acessar uma região próxima aos roletes e ao sistema de transmissão.</p>
+  <p>Descreva <strong>três cuidados ou procedimentos de segurança</strong> que devem ser adotados antes de iniciar essa manutenção.</p>
+  <textarea id="openAnswer" placeholder="Escreva sua resposta aqui..."></textarea>
+  <p class="small">Responda com suas próprias palavras. Seja objetivo e cite procedimentos concretos.</p>
+</section>
+
+<section class="panel no-print">
+  <h2>Concluir e entregar</h2>
+  <p>Depois de finalizar as questões e responder ao desafio prático, gere seu arquivo em PDF.</p>
+  <div class="actions">
+    <button class="primary" onclick="savePDF()">Salvar atividade em PDF</button>
+  </div>
+  <p class="small">Na janela de impressão, selecione “Salvar como PDF” como destino. Depois, envie o arquivo no sistema acadêmico.</p>
+</section>
+<footer>Estudo dirigido • Segurança na Manutenção Industrial</footer>
+</div>
+
+<script>
+const questions = [
+ {q:"1. Por que o simples desligamento de uma máquina não é suficiente para garantir a segurança durante uma atividade de manutenção?",a:["Porque a máquina pode apresentar defeitos mecânicos mesmo desligada.","Porque podem existir fontes de energia ou energias armazenadas capazes de provocar movimentos inesperados.","Porque toda manutenção exige a substituição dos componentes elétricos.","Porque o desligamento aumenta a temperatura dos componentes."],c:1,why:"Mesmo desligada no comando, a máquina pode manter outras fontes de energia ou energia armazenada."},
+ {q:"2. Durante uma manutenção, qual é a finalidade do procedimento de bloqueio e etiquetagem (LOTO)?",a:["Identificar os componentes que precisam ser substituídos.","Impedir que a máquina seja ligada ou reenergizada acidentalmente durante a intervenção.","Informar o tempo previsto para a realização da manutenção.","Registrar os custos envolvidos no serviço."],c:1,why:"O bloqueio e a etiquetagem ajudam a evitar acionamentos ou reenergizações inesperadas."},
+ {q:"3. Uma máquina possui sistemas elétricos, pneumáticos e hidráulicos. Antes de iniciar sua manutenção, o profissional deve:",a:["Desligar apenas a alimentação elétrica.","Acionar a parada de emergência e iniciar o serviço.","Isolar as fontes de energia, realizar os bloqueios necessários e controlar as energias armazenadas.","Solicitar que outro funcionário permaneça próximo ao botão de acionamento."],c:2,why:"Todas as fontes de energia perigosas devem ser consideradas, inclusive as energias armazenadas."},
+ {q:"4. Durante uma manutenção, um trabalhador identifica que uma proteção de segurança precisa ser removida para acessar determinado componente. Qual deve ser sua conduta?",a:["Remover a proteção e realizar a manutenção rapidamente.","Solicitar que um colega mantenha distância da máquina.","Seguir os procedimentos de segurança aplicáveis à intervenção, garantindo que os riscos sejam controlados antes do acesso à zona de perigo.","Manter a máquina ligada para facilitar a identificação do defeito."],c:2,why:"O acesso à zona de perigo exige procedimentos e medidas de controle adequados. Não se deve improvisar."},
+ {q:"5. Qual das alternativas apresenta uma prática adequada de segurança após a conclusão de uma manutenção?",a:["Religar a máquina imediatamente, mesmo que ainda existam ferramentas próximas.","Retirar as sinalizações e os bloqueios sem verificar as condições do equipamento.","Verificar as condições de segurança, retirar ferramentas e materiais, assegurar que as pessoas estejam afastadas e realizar a liberação conforme o procedimento estabelecido.","Solicitar ao operador que ligue a máquina enquanto o mecânico finaliza a organização do local."],c:2,why:"A liberação deve ocorrer de forma organizada, após as verificações necessárias e conforme o procedimento estabelecido."}
+];
+let submitted=false;
+const host=document.getElementById("questions");
+questions.forEach((q,i)=>{
+ const div=document.createElement("div");div.className="q";
+ const h=document.createElement("h3");h.textContent=q.q;div.appendChild(h);
+ q.a.forEach((ans,j)=>{
+  const lab=document.createElement("label");lab.className="option";
+  const inp=document.createElement("input");inp.type="radio";inp.name="q"+i;inp.value=j;
+  inp.addEventListener("change",updateProgress);
+  const span=document.createElement("span");span.textContent=String.fromCharCode(97+j)+") "+ans;
+  lab.append(inp,span);div.appendChild(lab);
+ });
+ const fb=document.createElement("div");fb.className="feedback";fb.id="fb"+i;div.appendChild(fb);host.appendChild(div);
+});
+function updateProgress(){
+ const count=questions.filter((q,i)=>document.querySelector('input[name="q'+i+'"]:checked')).length;
+ document.getElementById("bar").style.width=(count/questions.length*100)+"%";
+}
+function finishQuiz(){
+ if(submitted)return;
+ const missing=questions.findIndex((q,i)=>!document.querySelector('input[name="q'+i+'"]:checked'));
+ if(missing!==-1){alert("Responda à questão "+(missing+1)+" antes de finalizar.");return;}
+ let score=0;
+ questions.forEach((q,i)=>{
+  const selected=Number(document.querySelector('input[name="q'+i+'"]:checked').value);
+  const fb=document.getElementById("fb"+i);
+  if(selected===q.c){score++;fb.className="feedback good";fb.textContent="Correto! "+q.why;}
+  else{fb.className="feedback bad";fb.textContent="Não foi dessa vez. "+q.why;}
+ });
+ submitted=true;
+ document.querySelectorAll('#questions input').forEach(x=>x.disabled=true);
+ document.getElementById("finish").disabled=true;
+ const result=document.getElementById("result");result.style.display="block";
+ result.innerHTML="<strong>Missão finalizada!</strong><br><span class='score'>"+score+" de 5 acertos</span><br>"+(score===5?"Excelente! Você demonstrou domínio dos conceitos apresentados.":score>=3?"Bom trabalho! Revise os comentários e retome os pontos em que teve dúvida.":"Continue estudando! Revise a leitura e os comentários para fortalecer seus conhecimentos.")+"<br><span class='small'>O resultado das questões será incluído no PDF.</span>";
+ result.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function resetQuiz(){
+ if(!confirm("Deseja apagar as respostas e recomeçar?"))return;
+ submitted=false;
+ document.querySelectorAll('#questions input').forEach(x=>{x.checked=false;x.disabled=false;});
+ document.querySelectorAll('.feedback').forEach(x=>{x.className="feedback";x.textContent="";});
+ document.getElementById("finish").disabled=false;
+ document.getElementById("result").style.display="none";
+ updateProgress();
+}
+function savePDF(){
+ if(!submitted){alert("Finalize a missão antes de gerar o PDF.");return;}
+ if(!document.getElementById("student").value.trim()){alert("Preencha seu nome antes de gerar o PDF.");return;}
+ if(!document.getElementById("openAnswer").value.trim()){alert("Responda ao desafio prático antes de gerar o PDF.");return;}
+ window.print();
+}
+</script>
+</body>
+</html>
